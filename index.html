@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JBeees | Portofolio</title>
+<meta name="description" content="Portofolio sepuluh proyek JBeees: sistem backend, keamanan siber, data, dan aplikasi, dijelaskan dengan bahasa sehari-hari.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+/*
+  Konsep: sebuah ruangan gelap. Setiap karya adalah satu panel hitam dengan judul raksasa yang melebar,
+  dan jalur kerjanya menyala satu per satu seperti lampu panel dinyalakan saat sistem bekerja.
+  Nama di bagian atas memenuhi lebar layar (diukur lewat skrip), huruf dipadatkan dengan sumbu lebar Archivo.
+  Satu tema gelap yang disengaja, tanpa mode terang.
+*/
+:root {
+  color-scheme: dark;
+  --ink: #000000;
+  --coal: #0a0a0b;
+  --line: #25282c;
+  --dim: #8e949b;
+  --paper: #edeff1;
+  --glow: #9fc4ff;
+  --glow-line: #3c5478;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --gutter: max(clamp(16px, 4vw, 56px), env(safe-area-inset-left, 0px));
+  --gutter-r: max(clamp(16px, 4vw, 56px), env(safe-area-inset-right, 0px));
+}
+* { box-sizing: border-box; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--text);
+  font-size: 1.125rem;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
+.wrap {
+  max-width: 1320px;
+  margin-inline: auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+/* Pembuka */
+.pembuka { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); }
+.namabox { width: 100%; overflow: visible; }
+.nama {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  font-stretch: 62%;
+  font-size: clamp(5rem, 26vw, 24rem);
+  line-height: .8;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  color: var(--paper);
+}
+.nama span { display: inline-block; }
+.pembuka-isi {
+  display: grid;
+  grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+  gap: 2rem clamp(2rem, 6vw, 5rem);
+  margin-top: clamp(2rem, 5vw, 4rem);
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+.pernyataan {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  line-height: 1.3;
+  font-weight: 400;
+  text-wrap: balance;
+}
+.sisi { margin: 0; color: var(--dim); font-family: var(--display); font-size: .98rem; line-height: 1.6; display: grid; gap: .9rem; align-content: start; }
+.sisi p { margin: 0; }
+.sisi a { color: var(--paper); text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
+.sisi a:hover { text-decoration-color: var(--glow); }
+
+/* Daftar karya */
+.daftar { padding-bottom: clamp(3rem, 7vw, 6rem); }
+.daftar h2, .tentang h2 {
+  margin: 0 0 1.25rem;
+  font-family: var(--display);
+  font-weight: 700;
+  font-stretch: 100%;
+  font-size: 1.05rem;
+  letter-spacing: .01em;
+  color: var(--dim);
+}
+.daftar ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(2rem, 6vw, 5rem); border-top: 1px solid var(--line); }
+.daftar li { border-bottom: 1px solid var(--line); }
+.daftar a { display: grid; gap: .1rem; padding: .95rem 0; text-decoration: none; line-height: 1.4; }
+.daftar b { font-family: var(--display); font-weight: 700; font-stretch: 110%; font-size: 1.1rem; }
+.daftar span { color: var(--dim); font-size: .98rem; }
+.daftar a:hover b { color: var(--glow); }
+
+/* Panel karya */
+.panel { border-top: 1px solid var(--line); padding-block: clamp(3.5rem, 9vw, 8rem); background: var(--ink); }
+.panel h2 {
+  margin: 0 0 clamp(1.75rem, 4vw, 3.25rem);
+  font-family: var(--display);
+  font-weight: 800;
+  font-stretch: 125%;
+  font-size: clamp(2.1rem, 6.2vw, 5.6rem);
+  line-height: .98;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  max-width: 17ch;
+}
+.isi { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: 2.5rem clamp(2rem, 5vw, 4.5rem); align-items: start; }
+.fakta { position: sticky; top: 1.75rem; margin: 0; font-family: var(--display); font-size: .95rem; line-height: 1.5; display: grid; gap: 1.15rem; min-width: 0; }
+.fakta div { min-width: 0; }
+.fakta dt { color: var(--dim); margin-bottom: .15rem; }
+.fakta dd { margin: 0; color: var(--paper); overflow-wrap: anywhere; }
+.fakta a { text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
+.fakta a:hover { text-decoration-color: var(--glow); }
+.cerita { min-width: 0; max-width: 46rem; }
+.lede { margin: 0 0 1.75rem; font-size: clamp(1.4rem, 2.4vw, 1.85rem); line-height: 1.35; color: var(--paper); text-wrap: pretty; }
+.cerita p { margin: 0 0 1.15rem; color: #c9cdd2; }
+.cerita p b { color: var(--paper); font-weight: 600; }
+
+/* Jalur kerja: titik-titik yang menyala berurutan */
+.alur { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
+.alur h3 { margin: 0 0 1.4rem; font-family: var(--display); font-size: .95rem; font-weight: 600; font-stretch: 100%; color: var(--dim); }
+.alur ol { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 1.25rem; }
+.alur li { position: relative; padding-top: 1.6rem; font-family: var(--display); font-size: .98rem; line-height: 1.4; color: var(--dim); min-width: 0; overflow-wrap: break-word; }
+.alur li::before {
+  content: ""; position: absolute; left: 0; top: 0; width: 12px; height: 12px; border-radius: 50%;
+  background: var(--ink); border: 1.5px solid var(--dim);
+}
+.alur li::after { content: ""; position: absolute; left: 14px; right: -1.25rem; top: 5.5px; height: 1px; background: var(--line); }
+.alur li:last-child::after { display: none; }
+.alur.go li { animation: nyala .5s ease both; animation-delay: calc(var(--i, 0) * .32s); }
+.alur.go li::before { animation: titik .5s ease both; animation-delay: calc(var(--i, 0) * .32s); }
+.alur.go li::after { animation: garis .5s ease both; animation-delay: calc(var(--i, 0) * .32s + .15s); }
+@keyframes nyala { to { color: var(--paper); } }
+@keyframes titik { to { background: var(--glow); border-color: var(--glow); box-shadow: 0 0 0 4px rgba(159,196,255,.14), 0 0 18px rgba(159,196,255,.45); } }
+@keyframes garis { to { background: var(--glow-line); } }
+
+/* Tentang */
+.tentang { border-top: 1px solid var(--line); padding-block: clamp(3.5rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem); }
+.tentang-isi { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2.5rem clamp(2rem, 6vw, 5rem); }
+.tentang p { margin: 0 0 1.15rem; max-width: 40rem; }
+.alat { margin: 0; display: grid; gap: 1.1rem; font-family: var(--display); font-size: .98rem; line-height: 1.5; align-content: start; }
+.alat dt { color: var(--dim); margin-bottom: .1rem; }
+.alat dd { margin: 0; }
+.kaki { border-top: 1px solid var(--line); padding-block: 2rem 3rem; color: var(--dim); font-family: var(--display); font-size: .95rem; }
+.kaki a { color: var(--paper); text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
+
+@media (max-width: 860px) {
+  .pembuka-isi, .tentang-isi { grid-template-columns: minmax(0, 1fr); }
+  .daftar ul { grid-template-columns: minmax(0, 1fr); }
+  .isi { grid-template-columns: minmax(0, 1fr); }
+  .fakta { position: static; order: 2; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); padding-top: 1.5rem; }
+  .fakta .lebar { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  body { font-size: 1.06rem; }
+  .alur ol { grid-auto-flow: row; row-gap: 0; }
+  .alur li { padding: 0 0 1.15rem 1.9rem; }
+  .alur li::before { top: .38em; }
+  .alur li::after { left: 5.25px; right: auto; top: calc(.38em + 12px); bottom: -.1rem; width: 1px; height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .alur li { color: var(--paper); }
+  .alur li::before { background: var(--glow); border-color: var(--glow); }
+  .alur li::after { background: var(--glow-line); }
+}
+</style>
+</head>
+<body>
+
+<header class="pembuka wrap">
+  <div class="namabox"><h1 class="nama" id="nama"><span>JBeees</span></h1></div>
+  <div class="pembuka-isi">
+    <p class="pernyataan">Saya membuat sistem yang tetap menyala saat banyak orang memakainya, dan menjaga datanya tetap aman.</p>
+    <div class="sisi">
+      <p>Mahasiswa Ilmu Komputer. Di halaman ini ada sepuluh karya saya, dijelaskan dengan bahasa sehari-hari.</p>
+      <p>Terbuka untuk peluang di bidang keamanan siber dan bidang terkait. Hubungi lewat <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>.</p>
+    </div>
+  </div>
+</header>
+
+<nav class="daftar wrap" aria-label="Daftar karya">
+  <h2>Karya saya</h2>
+  <ul>
+    <li><a href="#ramai"><b>Tetap berjalan saat ramai</b><span>Sistem transaksi yang tidak ambruk saat jutaan transaksi datang</span></a></li>
+    <li><a href="#belajar-bersama"><b>Belajar bersama tanpa berbagi data</b><span>Empat komputer melatih satu model tanpa saling menukar data</span></a></li>
+    <li><a href="#data-berantakan"><b>Mengubah data berantakan jadi wawasan</b><span>Data penjualan dibersihkan lalu menjadi grafik</span></a></li>
+    <li><a href="#peta-sekolah"><b>Peta penyaluran makanan di sekolah</b><span>Situs pemantau porsi makanan yang sampai ke sekolah</span></a></li>
+    <li><a href="#vault"><b>Vault, catatan keuangan di ponsel</b><span>Aplikasi Android untuk uang harian, tabungan, dan utang</span></a></li>
+    <li><a href="#pengunduh"><b>Pengunduh file yang bisa dilanjutkan</b><span>Unduhan dipecah agar cepat dan tidak mulai dari nol</span></a></li>
+    <li><a href="#chatbot"><b>Chatbot yang paham maksud</b><span>Menjawab dari daftar FAQ walau kalimatnya berbeda</span></a></li>
+    <li><a href="#ctf"><b>Berlatih membongkar teka-teki keamanan</b><span>Catatan dari lomba keamanan siber</span></a></li>
+    <li><a href="#playlist-mp3"><b>Dari playlist menjadi MP3</b><span>Skrip otomatis untuk playlist Spotify</span></a></li>
+    <li><a href="#blockchain"><b>Pondasi jaringan blockchain</b><span>Jaringan privat untuk proyek kelompok</span></a></li>
+  </ul>
+</nav>
+
+<main>
+
+<section class="panel" id="ramai"><div class="wrap">
+  <h2>Tetap berjalan saat ramai</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Sistem backend</dd></div>
+      <div><dt>Dikerjakan</dt><dd>Proyek tim Cukurukuk, Universitas Brawijaya</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Go, PostgreSQL, Redis, RabbitMQ, Nginx, Docker, Prometheus, Grafana</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/exploding-user-data-scalabilities" rel="noopener">JBeees/exploding-user-data-scalabilities</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Simulasi sistem transaksi yang tidak ambruk ketika jutaan transaksi datang bersamaan.</p>
+      <p><b>Masalahnya.</b> Bayangkan aplikasi bank saat gajian atau promo besar. Jutaan orang membuka aplikasi dalam satu jam dan sistem lama bisa macet. Proyek ini meniru kejadian seperti itu dengan target 1 juta transaksi per jam, berdasarkan studi kasus CIMB Niaga.</p>
+      <p><b>Yang saya buat.</b> Pekerjaan dibagi ke tiga salinan server yang kembar. Pengguna yang terlalu agresif ditahan, pekerjaan berat dititipkan ke antrean, dan jawaban yang sering diminta disimpan di memori cepat. Jika satu bagian bermasalah, bagian itu diputus sementara supaya masalahnya tidak menjalar. Semuanya dipantau lewat dashboard grafik dan diuji dengan uji beban.</p>
+      <div class="alur"><h3>Perjalanan satu transaksi</h3>
+        <ol><li>Pengguna ramai datang</li><li>Pembagi beban memilih server</li><li>Tiga server kembar bekerja</li><li>Antrean dan memori cepat</li><li>Disimpan di database</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="belajar-bersama"><div class="wrap">
+  <h2>Belajar bersama tanpa berbagi data</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Pembelajaran mesin terdistribusi</dd></div>
+      <div><dt>Dikerjakan</dt><dd>Tugas kuliah Sistem Komputasi Terdistribusi</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, scikit-learn, koneksi TCP socket</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/federated_learning_project" rel="noopener">JBeees/federated_learning_project</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Empat komputer melatih satu model prediksi bersama, tanpa ada yang mengirim data aslinya.</p>
+      <p><b>Masalahnya.</b> Data nilai siswa bersifat pribadi, jadi tidak boleh dikumpulkan di satu tempat. Padahal agar tebakannya akurat, sebuah model perlu belajar dari banyak data.</p>
+      <p><b>Yang saya buat.</b> Setiap komputer belajar dari data miliknya sendiri, lalu hanya mengirim hasil belajarnya ke server pusat. Server merata-ratakan hasil itu dan mengirim kembali versi yang lebih pintar. Setelah 10 putaran, tebakan lulus atau tidak lulus mencapai ketepatan rata-rata sekitar 90,6%, memakai data nilai siswa dari UCI Machine Learning Repository.</p>
+      <div class="alur"><h3>Satu putaran belajar</h3>
+        <ol><li>Data tetap di tiap komputer</li><li>Tiap komputer belajar sendiri</li><li>Server merata-ratakan hasilnya</li><li>Model baru dikirim kembali</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="data-berantakan"><div class="wrap">
+  <h2>Mengubah data berantakan jadi wawasan</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Pengolahan data</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, PostgreSQL, SQL, Docker</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/online-retail-data-pipeline" rel="noopener">JBeees/online-retail-data-pipeline</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Jalur otomatis yang membersihkan data penjualan toko online lalu mengubahnya menjadi grafik.</p>
+      <p><b>Masalahnya.</b> Data penjualan mentah penuh masalah, seperti pesanan yang dibatalkan, kolom kosong, harga nol, dan baris ganda. Data seperti ini sulit dipakai untuk mengambil keputusan.</p>
+      <p><b>Yang saya buat.</b> Satu perintah menjalankan semuanya. Data dibaca, dibersihkan, dirapikan menjadi tiga tabel, disimpan di database, lalu diolah menjadi grafik dan jawaban atas pertanyaan bisnis. Data yang dipakai berasal dari kumpulan transaksi toko online di Kaggle.</p>
+      <div class="alur"><h3>Dari file mentah ke grafik</h3>
+        <ol><li>File data mentah</li><li>Dibersihkan</li><li>Dirapikan jadi tiga tabel</li><li>Disimpan di database</li><li>Menjadi grafik</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="peta-sekolah"><div class="wrap">
+  <h2>Peta penyaluran makanan di sekolah</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Aplikasi web</dd></div>
+      <div><dt>Dikerjakan</dt><dd>Tugas kuliah</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>PHP, Laravel, Leaflet (peta), Vite</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/WEB" rel="noopener">JBeees/WEB</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Situs untuk memantau makanan yang dikirim ke sekolah, lengkap dengan peta dan laporan.</p>
+      <p><b>Masalahnya.</b> Saat makanan dibagikan ke banyak sekolah di banyak daerah, sulit mengetahui berapa porsi yang sudah sampai dan apakah kualitasnya baik.</p>
+      <p><b>Yang saya buat.</b> Sebuah situs dengan peta yang menampilkan jumlah sekolah penerima, jumlah siswa, porsi terkirim, dan persentase makanan yang berkualitas baik. Petugas masuk dengan akun, mengunggah foto dokumentasi beserta jumlah porsi yang bagus dan yang buruk, lalu melihat riwayat dan laporannya.</p>
+      <div class="alur"><h3>Dari sekolah ke layar</h3>
+        <ol><li>Petugas masuk dengan akun</li><li>Mengunggah foto dan jumlah porsi</li><li>Dihitung otomatis</li><li>Tampil di peta dan laporan</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="vault"><div class="wrap">
+  <h2>Vault, catatan keuangan di ponsel</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Aplikasi Android</dd></div>
+      <div><dt>Cocok untuk</dt><dd>Android 7.0 ke atas</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Java, SQLite, MPAndroidChart</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/personal-finance-android-app" rel="noopener">JBeees/personal-finance-android-app</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Aplikasi sederhana untuk mencatat uang harian, tabungan, dan utang.</p>
+      <p><b>Masalahnya.</b> Uang saku atau gaji sering habis tanpa terasa karena pengeluaran kecil tidak tercatat.</p>
+      <p><b>Yang saya buat.</b> Aplikasi yang memisahkan uang harian dari tabungan. Pengeluaran dicatat per kategori seperti makanan, transportasi, dan hiburan, lalu saldo berkurang otomatis. Tabungan dikunci dengan PIN 6 angka. Ringkasan mingguan, bulanan, dan tahunan tampil sebagai grafik batang, dan ada halaman untuk mencatat utang. Semua data tersimpan di ponsel dan tidak dikirim ke internet.</p>
+      <div class="alur"><h3>Alur memakai aplikasi</h3>
+        <ol><li>Menambah saldo</li><li>Mencatat pengeluaran</li><li>Saldo diperbarui otomatis</li><li>Melihat grafik ringkasan</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="pengunduh"><div class="wrap">
+  <h2>Pengunduh file yang bisa dilanjutkan</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Aplikasi desktop</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, PyQt6, ekstensi browser (JavaScript)</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/python-download-manager" rel="noopener">JBeees/python-download-manager</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Aplikasi untuk mengunduh file besar dengan lebih cepat dan bisa dilanjutkan jika terputus.</p>
+      <p><b>Masalahnya.</b> Mengunduh file besar sering gagal di tengah jalan, lalu harus mulai lagi dari awal.</p>
+      <p><b>Yang saya buat.</b> Terinspirasi dari Internet Download Manager. File dipecah menjadi beberapa bagian (bawaannya delapan) yang diunduh bersamaan sehingga lebih cepat. Jika koneksi putus, unduhan dilanjutkan dari bagian terakhir. Ada tombol jeda, lanjut, batal, dan ulang, juga antrean unduhan. Ekstensi untuk Chrome atau Brave bisa menangkap unduhan dari browser secara otomatis.</p>
+      <div class="alur"><h3>Dari klik sampai selesai</h3>
+        <ol><li>Link diklik di browser</li><li>Ekstensi menangkapnya</li><li>File dipecah jadi beberapa bagian</li><li>Bagian diunduh bersamaan</li><li>Digabung jadi satu file</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="chatbot"><div class="wrap">
+  <h2>Chatbot yang paham maksud</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Chatbot di terminal</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, Sentence Transformers (Hugging Face)</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/simple-cli-faq-chatbot" rel="noopener">JBeees/simple-cli-faq-chatbot</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Chatbot tanya jawab yang memahami arti pertanyaan, bukan sekadar mencocokkan kata.</p>
+      <p><b>Masalahnya.</b> Orang menanyakan hal yang sama dengan kalimat yang berbeda. Chatbot yang hanya mencocokkan kata persis akan gagal mengenalinya.</p>
+      <p><b>Yang saya buat.</b> Chatbot ini mengubah pertanyaan menjadi deretan angka yang mewakili artinya, lalu mencari pertanyaan di daftar FAQ yang artinya paling dekat. Jika tidak cukup mirip, ia mengaku tidak tahu dan tidak mengarang jawaban.</p>
+      <div class="alur"><h3>Cara chatbot menjawab</h3>
+        <ol><li>Pertanyaan diketik</li><li>Diubah menjadi angka yang mewakili arti</li><li>Dicocokkan dengan daftar FAQ</li><li>Menjawab, atau mengaku tidak tahu</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="ctf"><div class="wrap">
+  <h2>Berlatih membongkar teka-teki keamanan</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Keamanan siber</dd></div>
+      <div><dt>Isi</dt><dd>Lebih dari 250 folder soal</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, C, Bash, PHP</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/CTF" rel="noopener">JBeees/CTF</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Kumpulan catatan dan skrip dari lomba keamanan siber yang saya ikuti untuk berlatih.</p>
+      <p><b>Apa itu CTF.</b> Panitia menyembunyikan sebuah kode rahasia yang disebut bendera di dalam sistem yang sengaja dibuat berlubang. Peserta berlomba menemukannya. Latihan ini melatih cara berpikir penyerang supaya bisa bertahan dengan lebih baik.</p>
+      <p><b>Yang saya simpan.</b> Soal dari picoCTF dan CTFlearn, paling banyak soal forensik digital, yaitu mencari jejak di dalam file dan rekaman jaringan. Ada juga rekayasa balik (membongkar cara kerja sebuah program), eksploitasi biner, keamanan web, dan kriptografi. Isinya berupa catatan langkah penyelesaian dan skrip bantu.</p>
+      <div class="alur"><h3>Satu soal, dari awal sampai bendera</h3>
+        <ol><li>Soal diberikan</li><li>Menyelidiki file atau sistemnya</li><li>Menemukan celah</li><li>Bendera didapat</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="playlist-mp3"><div class="wrap">
+  <h2>Dari playlist menjadi MP3</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Skrip otomatis</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, Spotipy, yt-dlp, FFmpeg</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/spotify-playlist-downloader" rel="noopener">JBeees/spotify-playlist-downloader</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Skrip yang mengubah isi playlist Spotify menjadi berkas MP3 di komputer.</p>
+      <p><b>Yang saya buat.</b> Skrip membaca daftar lagu dari playlist, termasuk yang privat atau kolaboratif, mencari tiap lagu di YouTube, mengunduh audio terbaik yang tersedia, lalu mengubahnya menjadi MP3 berkualitas 320 kbps.</p>
+      <p><b>Catatan penting.</b> Proyek ini untuk belajar dan keperluan pribadi. Mengunduh konten berhak cipta dapat melanggar aturan YouTube dan hukum setempat.</p>
+      <div class="alur"><h3>Dari playlist ke file</h3>
+        <ol><li>Daftar lagu dibaca</li><li>Tiap lagu dicari</li><li>Audio diunduh</li><li>Diubah menjadi MP3</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<section class="panel" id="blockchain"><div class="wrap">
+  <h2>Pondasi jaringan blockchain</h2>
+  <div class="isi">
+    <dl class="fakta">
+      <div><dt>Jenis</dt><dd>Jaringan blockchain privat</dd></div>
+      <div><dt>Dikerjakan</dt><dd>Tugas kuliah, dibagi ke empat kelompok</dd></div>
+      <div class="lebar"><dt>Dibuat dengan</dt><dd>Ethereum (Geth), konsensus Clique</dd></div>
+      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/blockchain-skripsi" rel="noopener">JBeees/blockchain-skripsi</a></dd></div>
+    </dl>
+    <div class="cerita">
+      <p class="lede">Jaringan blockchain privat yang disiapkan sebagai dasar proyek bersama beberapa kelompok.</p>
+      <p><b>Apa itu blockchain.</b> Buku catatan bersama yang tidak bisa diubah diam-diam, karena setiap komputer di jaringan memegang salinannya.</p>
+      <p><b>Yang ada di sini.</b> Empat kelompok membangun satu sistem bersama, yang mencakup kontrak pintar, mesin pendeteksi plagiarisme, dan dashboard pemantauan. Repositori ini baru memuat dasarnya, yaitu konfigurasi awal jaringan dengan lima validator, blok baru setiap 5 detik, dan panduan pemasangan untuk tiap kelompok. Bagian lainnya dikerjakan kelompok lain dan belum ada di sini.</p>
+      <div class="alur"><h3>Menyiapkan jaringan</h3>
+        <ol><li>Tiap kelompok memasang Geth</li><li>Alamat validator dikumpulkan</li><li>Blok pembuka disusun</li><li>Komputer saling tersambung</li></ol>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+</main>
+
+<section class="tentang"><div class="wrap">
+  <h2>Tentang saya</h2>
+  <div class="tentang-isi">
+    <div>
+      <p>Saya mahasiswa Ilmu Komputer dengan dua rasa ingin tahu. Pertama, bagaimana membuat sistem yang kuat saat penggunanya melonjak. Kedua, bagaimana sebuah sistem bisa dibobol, supaya saya tahu cara melindunginya.</p>
+      <p>Sehari-hari saya memakai Linux, Python, dan C/C++. Saat ini saya sedang mendalami uji penetrasi dan forensik digital.</p>
+    </div>
+    <dl class="alat">
+      <div><dt>Bahasa pemrograman</dt><dd>Python, Go, Java, PHP, C/C++, JavaScript</dd></div>
+      <div><dt>Penyimpanan data</dt><dd>PostgreSQL, SQLite, Redis, RabbitMQ</dd></div>
+      <div><dt>Infrastruktur dan pemantauan</dt><dd>Docker, Nginx, Prometheus, Grafana</dd></div>
+      <div><dt>Kerangka kerja</dt><dd>Laravel, PyQt6</dd></div>
+    </dl>
+  </div>
+</div></section>
+
+<footer class="kaki"><div class="wrap">Semua kode ada di <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>. 2026.</div></footer>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  var nama = document.getElementById("nama");
+  var span = nama && nama.firstElementChild;
+  function fit() {
+    if (!span) return;
+    var box = nama.parentElement.clientWidth;
+    nama.style.fontSize = "100px";
+    var w = span.getBoundingClientRect().width;
+    if (w > 0 && box > 0) nama.style.fontSize = (100 * box / w) + "px";
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener("resize", fit);
+
+  var alur = document.querySelectorAll(".alur");
+  Array.prototype.forEach.call(alur, function (a) {
+    Array.prototype.forEach.call(a.querySelectorAll("li"), function (li, i) {
+      li.style.setProperty("--i", i);
+    });
+  });
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("go"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.5 });
+    Array.prototype.forEach.call(alur, function (a) { io.observe(a); });
+  } else {
+    Array.prototype.forEach.call(alur, function (a) { a.classList.add("go"); });
+  }
+})();
+</script>
+</body>
+</html>
