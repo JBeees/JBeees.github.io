@@ -25,7 +25,7 @@
   Concept: a dark room. Each project is one black panel with a huge, wide title,
   and its workflow lights up step by step, like panel lights switching on as the system runs.
   The name at the top fills the screen width (measured by script), set in Archivo's wide axis.
-  One deliberate dark theme, no light mode.
+  One deliberate dark theme, plus a hidden hacker mode (type "hack").
 */
 :root {
   color-scheme: dark;
@@ -35,11 +35,23 @@
   --dim: #8e949b;
   --paper: #edeff1;
   --glow: #9fc4ff;
+  --glow-rgb: 159, 196, 255;
   --glow-line: #3c5478;
   --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --text: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --gutter: max(clamp(16px, 4vw, 56px), env(safe-area-inset-left, 0px));
   --gutter-r: max(clamp(16px, 4vw, 56px), env(safe-area-inset-right, 0px));
+}
+html.hacker {
+  --glow: #39ff88;
+  --glow-rgb: 57, 255, 136;
+  --glow-line: #17653b;
+  --paper: #d6ffe6;
+  --dim: #5fa07b;
+  --line: #0f2e1d;
+  --display: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 * { box-sizing: border-box; }
 img { max-width: 100%; }
@@ -54,8 +66,9 @@ body {
   line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
+html.hacker body { text-shadow: 0 0 8px rgba(var(--glow-rgb), .25); }
 a { color: inherit; }
-a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 .wrap {
   max-width: 1320px;
   margin-inline: auto;
@@ -68,7 +81,7 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50;
   transform: scaleX(0); transform-origin: 0 50%;
   background: linear-gradient(90deg, var(--glow-line), var(--glow));
-  box-shadow: 0 0 12px rgba(159,196,255,.6);
+  box-shadow: 0 0 12px rgba(var(--glow-rgb), .6);
   pointer-events: none;
 }
 .aurora { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
@@ -86,19 +99,59 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   background: radial-gradient(circle, #5a3fa8, transparent 65%);
   animation: drift2 26s ease-in-out infinite alternate;
 }
+html.hacker .aurora::before { background: radial-gradient(circle, #0f8a4a, transparent 65%); }
+html.hacker .aurora::after { background: radial-gradient(circle, #0a5a3a, transparent 65%); }
 @keyframes drift1 { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
 @keyframes drift2 { to { transform: translate(-16vmax, -10vmax) scale(1.1); } }
 .spot {
   position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 30%), rgba(159,196,255,.09), transparent 60%);
+  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 30%), rgba(var(--glow-rgb), .09), transparent 60%);
 }
+.rain {
+  position: fixed; inset: 0; width: 100%; height: 100%; z-index: -3;
+  pointer-events: none; opacity: 0; transition: opacity .6s;
+}
+html.hacker .rain { opacity: .4; }
+.scan {
+  position: fixed; inset: 0; z-index: 150; pointer-events: none; opacity: 0; transition: opacity .6s;
+  background: repeating-linear-gradient(to bottom, rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 3px);
+}
+html.hacker .scan { opacity: 1; animation: flick 6s steps(1) infinite; }
+@keyframes flick { 0%, 96% { opacity: 1; } 97% { opacity: .75; } 98% { opacity: 1; } 99% { opacity: .85; } 100% { opacity: 1; } }
+
+/* Custom cursor */
+.cur-dot, .cur-ring { position: fixed; top: 0; left: 0; z-index: 200; pointer-events: none; opacity: 0; transition: opacity .25s; }
+.cur-dot {
+  width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+  background: var(--glow); box-shadow: 0 0 10px rgba(var(--glow-rgb), .8);
+}
+.cur-ring i {
+  display: block; width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border: 1.5px solid rgba(var(--glow-rgb), .55); border-radius: 50%;
+  transition: transform .3s cubic-bezier(.2,.8,.2,1), background .3s, border-color .3s;
+}
+html.cursor-on .cur-dot, html.cursor-on .cur-ring { opacity: 1; }
+html.cursor-on.cursor-out .cur-dot, html.cursor-on.cursor-out .cur-ring { opacity: 0; }
+.cur-ring.hot i { transform: scale(1.9); background: rgba(var(--glow-rgb), .1); border-color: var(--glow); }
+.cur-ring.down i { transform: scale(.7); }
+html.cursor-on, html.cursor-on * { cursor: none !important; }
+
+/* Toast */
+.toast {
+  position: fixed; left: 50%; bottom: max(1.5rem, env(safe-area-inset-bottom, 0px)); z-index: 160;
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  padding: .7rem 1.1rem; border: 1px solid var(--glow-line); border-radius: 10px;
+  background: rgba(0,0,0,.85); color: var(--glow); font-family: var(--mono); font-size: .85rem;
+  max-width: calc(100vw - 2rem); text-align: center; transition: opacity .4s, transform .4s;
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* Intro */
 html.loading, html.loading body { overflow: hidden; }
 .js.loading .nama .ch, .js.loading .pernyataan .w { animation-play-state: paused; }
 .intro {
   display: none; position: fixed; inset: 0; z-index: 100; color: var(--paper);
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--mono);
 }
 .js.loading .intro, .intro.open { display: block; }
 .intro.open { pointer-events: none; }
@@ -120,7 +173,7 @@ html.loading, html.loading body { overflow: hidden; }
 .intro-log div { animation: lineIn .45s ease both; }
 .intro-log div:last-child { color: var(--paper); }
 .intro-log div:last-child::after { content: "_"; color: var(--glow); animation: blink 1s steps(1) infinite; }
-.intro.granted .intro-log div:last-child { color: var(--glow); text-shadow: 0 0 14px rgba(159,196,255,.6); }
+.intro.granted .intro-log div:last-child { color: var(--glow); text-shadow: 0 0 14px rgba(var(--glow-rgb), .6); }
 @keyframes lineIn { from { opacity: 0; transform: translateX(-12px); } }
 @keyframes blink { 50% { opacity: 0; } }
 .intro-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; }
@@ -129,7 +182,7 @@ html.loading, html.loading body { overflow: hidden; }
   font-size: clamp(5rem, 26vw, 22rem); line-height: .8; font-variant-numeric: tabular-nums;
   transition: color .4s, text-shadow .4s;
 }
-.intro.granted .intro-count { color: var(--glow); text-shadow: 0 0 40px rgba(159,196,255,.45); }
+.intro.granted .intro-count { color: var(--glow); text-shadow: 0 0 40px rgba(var(--glow-rgb), .45); }
 .intro-skip {
   font: inherit; font-size: .85rem; color: var(--dim); background: none; border: 1px solid var(--line);
   border-radius: 999px; padding: .5rem 1rem; cursor: pointer; transition: color .3s, border-color .3s;
@@ -138,7 +191,7 @@ html.loading, html.loading body { overflow: hidden; }
 .intro-meter { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
 .intro-meter i {
   display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%;
-  background: linear-gradient(90deg, var(--glow-line), var(--glow)); box-shadow: 0 0 14px rgba(159,196,255,.7);
+  background: linear-gradient(90deg, var(--glow-line), var(--glow)); box-shadow: 0 0 14px rgba(var(--glow-rgb), .7);
 }
 
 /* Hero */
@@ -156,8 +209,9 @@ html.loading, html.loading body { overflow: hidden; }
   color: var(--paper);
 }
 .nama span { display: inline-block; }
-.nama .ch { transition: transform .35s cubic-bezier(.2,.8,.2,1), color .35s, text-shadow .35s; }
-.nama .ch:hover { color: var(--glow); transform: translateY(-.05em); text-shadow: 0 0 .25em rgba(159,196,255,.55); }
+.nama .ch { text-align: center; transition: transform .35s cubic-bezier(.2,.8,.2,1), color .35s, text-shadow .35s; }
+.nama .ch:hover { color: var(--glow); transform: translateY(-.05em); text-shadow: 0 0 .25em rgba(var(--glow-rgb), .55); }
+.nama .ch.scr { color: var(--glow); text-shadow: 0 0 .2em rgba(var(--glow-rgb), .5); }
 .js .nama .ch { animation: rise 1s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * .08s + .1s); }
 @keyframes rise { from { opacity: 0; transform: translateY(.35em) rotate(4deg); filter: blur(12px); } }
 
@@ -237,7 +291,63 @@ html.loading, html.loading body { overflow: hidden; }
 .cerita { min-width: 0; max-width: 46rem; }
 .lede { margin: 0 0 1.75rem; font-size: clamp(1.4rem, 2.4vw, 1.85rem); line-height: 1.35; color: var(--paper); text-wrap: pretty; }
 .cerita p { margin: 0 0 1.15rem; color: #c9cdd2; }
+html.hacker .cerita p { color: var(--dim); }
 .cerita p b { color: var(--paper); font-weight: 600; }
+
+/* Count-up stat */
+.stat { margin: 0 0 1.75rem; display: grid; gap: .1rem; }
+.stat b {
+  font-family: var(--display); font-weight: 800; font-stretch: 125%;
+  font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1; letter-spacing: -.02em;
+  color: var(--glow); text-shadow: 0 0 28px rgba(var(--glow-rgb), .35); font-variant-numeric: tabular-nums;
+}
+.stat span { font-family: var(--display); font-size: .95rem; color: var(--dim); }
+
+/* Illustrations */
+.viz {
+  margin: 2rem 0 0; padding: 1.25rem; border: 1px solid var(--line); border-radius: 14px;
+  background: rgba(10,10,11,.55); overflow: hidden;
+}
+.viz svg { display: block; width: 100%; height: auto; }
+.viz-cap { margin: .9rem 0 0; font-family: var(--display); font-size: .85rem; line-height: 1.5; color: var(--dim); }
+.viz .ln path { fill: none; stroke: var(--line); stroke-width: 1.5; }
+.viz .nd { fill: var(--ink); stroke: var(--glow-line); stroke-width: 1.5; }
+.viz .hub { fill: var(--ink); stroke: var(--glow); stroke-width: 1.5; }
+.viz .core { fill: var(--glow); }
+.viz .ring { fill: none; stroke: var(--glow); stroke-width: 1.5; }
+.viz .srv { fill: var(--ink); stroke: var(--glow-line); stroke-width: 1.5; }
+.viz .led { fill: var(--glow); }
+.viz .dat { fill: none; stroke: var(--dim); stroke-width: 1.5; stroke-linecap: round; opacity: .6; }
+.viz .flash { fill: none; stroke: var(--glow); stroke-width: 2; }
+.viz .pk circle { fill: var(--glow); filter: drop-shadow(0 0 4px var(--glow)); }
+.viz .pk2 circle { fill: var(--paper); filter: drop-shadow(0 0 5px var(--glow)); }
+.viz .trk { fill: var(--line); }
+.viz .bar { fill: var(--glow); opacity: .85; filter: drop-shadow(0 0 3px rgba(var(--glow-rgb), .6)); }
+.viz .flashb { fill: var(--glow); }
+.viz .blk { fill: var(--ink); stroke: var(--glow-line); stroke-width: 1.5; }
+.viz .blk.dash { stroke-dasharray: 4 4; }
+.viz .blk.on { fill: rgba(var(--glow-rgb), .06); stroke: var(--glow); stroke-dasharray: none; }
+.viz .lk { fill: none; stroke: var(--glow); stroke-width: 1.5; }
+.viz .gate3 { animation: gate 10s linear infinite; }
+.viz .srv3 { animation: brkS 10s linear infinite; }
+.viz .led3 { animation: brkF 10s linear infinite; }
+.viz .xmark { fill: none; stroke: #ff6b6b; stroke-width: 2; stroke-linecap: round; opacity: 0; animation: xm 10s linear infinite; }
+.viz.off *, .viz.off { animation-play-state: paused !important; }
+@keyframes gate { 0%, 35% { opacity: 1; } 40%, 70% { opacity: 0; } 75%, 100% { opacity: 1; } }
+@keyframes brkS { 0%, 35% { stroke: var(--glow-line); } 40%, 70% { stroke: #ff6b6b; } 75%, 100% { stroke: var(--glow-line); } }
+@keyframes brkF { 0%, 35% { fill: var(--glow); } 40%, 70% { fill: #ff6b6b; } 75%, 100% { fill: var(--glow); } }
+@keyframes xm { 0%, 35% { opacity: 0; } 40%, 70% { opacity: 1; } 75%, 100% { opacity: 0; } }
+
+.viz-term { padding: 0; border: 0; background: none; }
+.term { border: 1px solid var(--line); border-radius: 10px; background: rgba(0,0,0,.6); overflow: hidden; }
+.term-bar { display: flex; gap: 6px; padding: .6rem .8rem; border-bottom: 1px solid var(--line); }
+.term-bar i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.term-body { margin: 0; padding: 1rem 1.1rem; font: .95rem/1.8 var(--mono); color: var(--dim); overflow-x: auto; white-space: pre; }
+.term-body .pr { color: var(--glow); }
+.term-body .flag { color: var(--paper); transition: color .4s, text-shadow .4s; }
+.term-body .flag.done { color: var(--glow); text-shadow: 0 0 12px rgba(var(--glow-rgb), .5); }
+.term-body .cur { display: inline-block; width: .6em; height: 1.1em; background: var(--glow); vertical-align: -.2em; margin-left: .2rem; animation: blink 1s steps(1) infinite; }
+.viz-term .viz-cap { margin-top: .9rem; }
 
 /* Workflow: dots that light up in sequence */
 .alur { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
@@ -254,7 +364,7 @@ html.loading, html.loading body { overflow: hidden; }
 .alur.go li::before { animation: titik .5s ease both; animation-delay: calc(var(--i, 0) * .32s); }
 .alur.go li::after { animation: garis .5s ease both; animation-delay: calc(var(--i, 0) * .32s + .15s); }
 @keyframes nyala { to { color: var(--paper); } }
-@keyframes titik { to { background: var(--glow); border-color: var(--glow); box-shadow: 0 0 0 4px rgba(159,196,255,.14), 0 0 18px rgba(159,196,255,.45); } }
+@keyframes titik { to { background: var(--glow); border-color: var(--glow); box-shadow: 0 0 0 4px rgba(var(--glow-rgb), .14), 0 0 18px rgba(var(--glow-rgb), .45); } }
 @keyframes garis { to { background: var(--glow-line); } }
 
 /* Scroll reveal */
@@ -272,6 +382,9 @@ html.loading, html.loading body { overflow: hidden; }
 .alat dd { margin: 0; }
 .kaki { border-top: 1px solid var(--line); padding-block: 2rem 3rem; color: var(--dim); font-family: var(--display); font-size: .95rem; }
 .kaki a { color: var(--paper); text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
+.kaki .hint { margin: .9rem 0 0; font-size: .85rem; opacity: .8; }
+.kaki kbd { font-family: var(--mono); border: 1px solid var(--line); border-radius: 5px; padding: .05rem .4rem; color: var(--paper); }
+.kaki button { font: inherit; color: var(--paper); background: none; border: 0; padding: 0; text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; cursor: pointer; }
 
 @media (max-width: 860px) {
   .pembuka-isi, .tentang-isi { grid-template-columns: minmax(0, 1fr); }
@@ -282,6 +395,7 @@ html.loading, html.loading body { overflow: hidden; }
 }
 @media (max-width: 640px) {
   body { font-size: 1.06rem; }
+  .viz { padding: .9rem; }
   .alur ol { grid-auto-flow: row; row-gap: 0; }
   .alur li { padding: 0 0 1.15rem 1.9rem; }
   .alur li::before { top: .38em; }
@@ -290,6 +404,7 @@ html.loading, html.loading body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .aurora::before, .aurora::after { animation: none; }
+  .viz *, .scan { animation: none !important; }
   .alur li { color: var(--paper); }
   .alur li::before { background: var(--glow); border-color: var(--glow); }
   .alur li::after { background: var(--glow-line); }
@@ -314,6 +429,11 @@ html.loading, html.loading body { overflow: hidden; }
 <div class="progress" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"></div>
 <div class="spot" aria-hidden="true"></div>
+<canvas class="rain" id="rain" aria-hidden="true"></canvas>
+<div class="scan" aria-hidden="true"></div>
+<div class="cur-dot" aria-hidden="true"></div>
+<div class="cur-ring" aria-hidden="true"><i></i></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <header class="pembuka wrap">
   <div class="namabox"><h1 class="nama" id="nama"><span>JBeees</span></h1></div>
@@ -355,8 +475,49 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">A simulation of a transaction system that doesn't collapse when millions of transactions arrive at once.</p>
+      <div class="stat"><b data-count="1000000">1,000,000</b><span>transactions per hour, the target</span></div>
       <p><b>The problem.</b> Picture a banking app on payday or during a big promo. Millions of people open the app within an hour, and an older system can jam. This project imitates that situation with a target of 1 million transactions per hour, based on a CIMB Niaga case study.</p>
       <p><b>What I built.</b> The work is split across three identical copies of the server. Users who get too aggressive are throttled, heavy jobs are handed off to a queue, and frequently requested answers are kept in fast memory. If one part misbehaves, it is cut off temporarily so the problem doesn't spread. Everything is monitored through a graph dashboard and tested with load tests.</p>
+      <figure class="viz">
+        <svg viewBox="0 0 480 180" aria-hidden="true" focusable="false">
+          <g class="ln">
+            <path d="M24 90H140"/>
+            <path d="M140 90L330 30"/>
+            <path d="M140 90L330 90"/>
+            <path d="M140 90L330 150"/>
+            <path d="M400 30L446 90"/>
+            <path d="M400 90H446"/>
+            <path d="M400 150L446 90"/>
+          </g>
+          <circle class="nd" cx="14" cy="74" r="4"/>
+          <circle class="nd" cx="14" cy="90" r="4"/>
+          <circle class="nd" cx="14" cy="106" r="4"/>
+          <circle class="hub" cx="140" cy="90" r="10"/>
+          <rect class="srv" x="330" y="14" width="70" height="32" rx="5"/>
+          <rect class="srv" x="330" y="74" width="70" height="32" rx="5"/>
+          <rect class="srv srv3" x="330" y="134" width="70" height="32" rx="5"/>
+          <circle class="led" cx="346" cy="30" r="2.5"/>
+          <circle class="led" cx="346" cy="90" r="2.5"/>
+          <circle class="led led3" cx="346" cy="150" r="2.5"/>
+          <path class="dat" d="M360 25h28M360 35h18"/>
+          <path class="dat" d="M360 85h28M360 95h18"/>
+          <path class="dat" d="M360 145h28M360 155h18"/>
+          <rect class="srv" x="446" y="72" width="28" height="36" rx="7"/>
+          <path class="dat" d="M452 84h16M452 92h16M452 100h16"/>
+          <g class="xmark"><path d="M346 142l40 16M386 142l-40 16"/></g>
+          <g class="pk">
+            <circle r="3"><animateMotion dur="2.4s" begin="0s" repeatCount="indefinite" path="M24 90L140 90L330 30L400 30L446 90"/></circle>
+            <circle r="3"><animateMotion dur="2.4s" begin="-1.2s" repeatCount="indefinite" path="M24 90L140 90L330 30L400 30L446 90"/></circle>
+            <circle r="3"><animateMotion dur="2.4s" begin="-0.4s" repeatCount="indefinite" path="M24 90L140 90L330 90L400 90L446 90"/></circle>
+            <circle r="3"><animateMotion dur="2.4s" begin="-1.6s" repeatCount="indefinite" path="M24 90L140 90L330 90L400 90L446 90"/></circle>
+          </g>
+          <g class="pk gate3">
+            <circle r="3"><animateMotion dur="2.4s" begin="-0.8s" repeatCount="indefinite" path="M24 90L140 90L330 150L400 150L446 90"/></circle>
+            <circle r="3"><animateMotion dur="2.4s" begin="-2s" repeatCount="indefinite" path="M24 90L140 90L330 150L400 150L446 90"/></circle>
+          </g>
+        </svg>
+        <figcaption class="viz-cap">Illustration: traffic is spread across three servers. One trips its circuit breaker, gets cut off, then recovers.</figcaption>
+      </figure>
       <div class="alur"><h3>The journey of one transaction</h3>
         <ol><li>A crowd of users arrives</li><li>Load balancer picks a server</li><li>Three identical servers work</li><li>Queue and fast memory</li><li>Saved in the database</li></ol>
       </div>
@@ -375,8 +536,48 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">Four computers train one shared prediction model, and none of them sends its raw data.</p>
+      <div class="stat"><b data-count="90.6" data-dec="1" data-suffix="%">90.6%</b><span>average accuracy after 10 rounds</span></div>
       <p><b>The problem.</b> Student grade data is private, so it can't be gathered in one place. Yet to guess accurately, a model needs to learn from a lot of data.</p>
       <p><b>What I built.</b> Each computer learns from its own data, then sends only what it learned to a central server. The server averages those results and sends back a smarter version. After 10 rounds, the pass-or-fail prediction reaches an average accuracy of about 90.6%, using student grade data from the UCI Machine Learning Repository.</p>
+      <figure class="viz">
+        <svg viewBox="0 0 480 180" aria-hidden="true" focusable="false">
+          <g class="ln">
+            <path d="M70 40L240 90"/><path d="M70 140L240 90"/>
+            <path d="M410 40L240 90"/><path d="M410 140L240 90"/>
+          </g>
+          <rect class="srv" x="40" y="20" width="60" height="40" rx="6"/>
+          <path class="dat" d="M52 32h36M52 40h36M52 48h22"/>
+          <rect class="srv" x="40" y="120" width="60" height="40" rx="6"/>
+          <path class="dat" d="M52 132h36M52 140h36M52 148h22"/>
+          <rect class="srv" x="380" y="20" width="60" height="40" rx="6"/>
+          <path class="dat" d="M392 32h36M392 40h36M392 48h22"/>
+          <rect class="srv" x="380" y="120" width="60" height="40" rx="6"/>
+          <path class="dat" d="M392 132h36M392 140h36M392 148h22"/>
+          <rect class="flash" x="40" y="20" width="60" height="40" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.79;0.82;0.92;1" dur="4s" repeatCount="indefinite"/></rect>
+          <rect class="flash" x="40" y="120" width="60" height="40" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.79;0.82;0.92;1" dur="4s" repeatCount="indefinite"/></rect>
+          <rect class="flash" x="380" y="20" width="60" height="40" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.79;0.82;0.92;1" dur="4s" repeatCount="indefinite"/></rect>
+          <rect class="flash" x="380" y="120" width="60" height="40" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;1;0;0" keyTimes="0;0.79;0.82;0.92;1" dur="4s" repeatCount="indefinite"/></rect>
+          <circle class="hub" cx="240" cy="90" r="22"/>
+          <circle class="ring" cx="240" cy="90" r="22" opacity="0">
+            <animate attributeName="r" values="22;22;44;44" keyTimes="0;0.3;0.55;1" dur="4s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;0.7;0;0" keyTimes="0;0.3;0.31;0.55;1" dur="4s" repeatCount="indefinite"/>
+          </circle>
+          <circle class="core" cx="240" cy="90" r="6"/>
+          <g class="pk">
+            <circle r="3.5"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.3;1" path="M70 40L240 90"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.29;0.3;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="3.5"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.3;1" path="M70 140L240 90"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.29;0.3;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="3.5"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.3;1" path="M410 40L240 90"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.29;0.3;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="3.5"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;1;1" keyTimes="0;0.3;1" path="M410 140L240 90"/><animate attributeName="opacity" values="1;1;0;0" keyTimes="0;0.29;0.3;1" dur="4s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="pk2">
+            <circle r="4.5" opacity="0"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.5;0.8;1" path="M240 90L70 40"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.49;0.5;0.8;0.81;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="4.5" opacity="0"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.5;0.8;1" path="M240 90L70 140"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.49;0.5;0.8;0.81;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="4.5" opacity="0"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.5;0.8;1" path="M240 90L410 40"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.49;0.5;0.8;0.81;1" dur="4s" repeatCount="indefinite"/></circle>
+            <circle r="4.5" opacity="0"><animateMotion dur="4s" repeatCount="indefinite" calcMode="linear" keyPoints="0;0;1;1" keyTimes="0;0.5;0.8;1" path="M240 90L410 140"/><animate attributeName="opacity" values="0;0;1;1;0;0" keyTimes="0;0.49;0.5;0.8;0.81;1" dur="4s" repeatCount="indefinite"/></circle>
+          </g>
+        </svg>
+        <figcaption class="viz-cap">Illustration: each computer keeps its data, sends only what it learned, and receives the averaged model back.</figcaption>
+      </figure>
       <div class="alur"><h3>One round of learning</h3>
         <ol><li>Data stays on each computer</li><li>Each computer learns on its own</li><li>The server averages the results</li><li>The new model is sent back</li></ol>
       </div>
@@ -453,8 +654,34 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">An app for downloading large files faster, and resuming if the connection drops.</p>
+      <div class="stat"><b data-count="8">8</b><span>parts downloaded at the same time, by default</span></div>
       <p><b>The problem.</b> Large downloads often fail halfway, forcing you to start over from the beginning.</p>
       <p><b>What I built.</b> Inspired by Internet Download Manager. A file is split into several parts (eight by default) that download at the same time, so it's faster. If the connection drops, the download resumes from the last part. There are pause, resume, cancel, and retry buttons, plus a download queue. An extension for Chrome or Brave can automatically catch downloads from the browser.</p>
+      <figure class="viz">
+        <svg viewBox="0 0 480 176" aria-hidden="true" focusable="false">
+          <rect class="trk" x="20" y="6" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="6" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.38;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="21" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="21" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.5;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="36" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="36" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.32;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="51" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="51" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.56;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="66" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="66" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.44;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="81" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="81" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.34;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="96" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="96" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.52;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="trk" x="20" y="111" width="440" height="8" rx="3"/>
+          <rect class="bar" x="20" y="111" width="0" height="8" rx="3"><animate attributeName="width" values="0;440;440;0" keyTimes="0;0.42;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <path class="dat" d="M240 124v10M234 130l6 6 6-6"/>
+          <rect class="trk" x="20" y="142" width="440" height="14" rx="4"/>
+          <rect class="bar" x="20" y="142" width="0" height="14" rx="4"><animate attributeName="width" values="0;0;440;440;0" keyTimes="0;0.58;0.7;0.92;1" dur="7s" repeatCount="indefinite"/></rect>
+          <rect class="flashb" x="20" y="142" width="440" height="14" rx="4" opacity="0"><animate attributeName="opacity" values="0;0;0.5;0;0" keyTimes="0;0.69;0.71;0.8;1" dur="7s" repeatCount="indefinite"/></rect>
+        </svg>
+        <figcaption class="viz-cap">Illustration: eight parts download at the same time, then merge into one file.</figcaption>
+      </figure>
       <div class="alur"><h3>From click to done</h3>
         <ol><li>Link clicked in the browser</li><li>Extension catches it</li><li>File split into several parts</li><li>Parts download simultaneously</li><li>Merged into one file</li></ol>
       </div>
@@ -492,8 +719,17 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">A collection of notes and scripts from cybersecurity competitions I joined to practice.</p>
+      <div class="stat"><b data-count="250" data-suffix="+">250+</b><span>challenge folders</span></div>
       <p><b>What is CTF.</b> Organizers hide a secret code called a flag inside a deliberately vulnerable system, and participants race to find it. The practice trains the attacker's way of thinking so I can defend better.</p>
       <p><b>What I keep here.</b> Challenges from picoCTF and CTFlearn, mostly digital forensics, meaning hunting for traces inside files and network recordings. There's also reverse engineering (working out how a program works), binary exploitation, web security, and cryptography. The contents are notes on solution steps and helper scripts.</p>
+      <figure class="viz viz-term">
+        <div class="term">
+          <div class="term-bar" aria-hidden="true"><i></i><i></i><i></i></div>
+          <pre class="term-body" aria-hidden="true"><span class="pr">$</span> python3 solve.py challenge.bin
+<span class="pr">&gt;</span> <span class="flag done" id="flagOut" data-flag="flag{y0u_f0und_th3_fl4g}">flag{y0u_f0und_th3_fl4g}</span><span class="cur"></span></pre>
+        </div>
+        <figcaption class="viz-cap">Illustration: a flag being recovered from scrambled data. The flag shown is made up.</figcaption>
+      </figure>
       <div class="alur"><h3>One challenge, from start to flag</h3>
         <ol><li>Challenge given</li><li>Investigating the file or system</li><li>Finding the weakness</li><li>Flag captured</li></ol>
       </div>
@@ -511,6 +747,7 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">A script that turns a Spotify playlist into MP3 files on your computer.</p>
+      <div class="stat"><b data-count="320" data-suffix=" kbps">320 kbps</b><span>MP3 output quality</span></div>
       <p><b>What I built.</b> The script reads the song list from a playlist, including private or collaborative ones, searches for each song on YouTube, downloads the best available audio, then converts it into 320 kbps MP3.</p>
       <p><b>Important note.</b> This project is for learning and personal use. Downloading copyrighted content may violate YouTube's rules and local law.</p>
       <div class="alur"><h3>From playlist to files</h3>
@@ -531,8 +768,36 @@ html.loading, html.loading body { overflow: hidden; }
     </dl>
     <div class="cerita">
       <p class="lede">A private blockchain network set up as the foundation for a project shared by several groups.</p>
+      <div class="stat"><b data-count="5" data-suffix=" s">5 s</b><span>per new block, with five validators</span></div>
       <p><b>What is a blockchain.</b> A shared ledger that can't be quietly altered, because every computer on the network holds a copy.</p>
       <p><b>What's here.</b> Four groups build one shared system, covering smart contracts, a plagiarism detection engine, and a monitoring dashboard. This repository only holds the foundation: the initial network configuration with five validators, a new block every 5 seconds, and setup guides for each group. The other parts were built by other groups and aren't here.</p>
+      <figure class="viz">
+        <svg viewBox="0 0 480 120" aria-hidden="true" focusable="false">
+          <g>
+            <animateTransform attributeName="transform" type="translate" values="0 0;0 0;-100 0;-100 0" keyTimes="0;0.78;0.93;1" dur="5s" repeatCount="indefinite" calcMode="spline" keySplines="0 0 1 1;0.6 0 0.2 1;0 0 1 1"/>
+            <path class="lk" d="M90 60H110"/>
+            <path class="lk" d="M190 60H210"/>
+            <path class="lk" d="M290 60H310"/>
+            <path class="lk" d="M390 60H410" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.7;0.74;1" dur="5s" repeatCount="indefinite"/></path>
+            <rect class="blk on" x="10" y="32" width="80" height="56" rx="6"/>
+            <path class="dat" d="M22 52h40M22 62h56M22 72h28"/>
+            <rect class="blk on" x="110" y="32" width="80" height="56" rx="6"/>
+            <path class="dat" d="M122 52h40M122 62h56M122 72h28"/>
+            <rect class="blk on" x="210" y="32" width="80" height="56" rx="6"/>
+            <path class="dat" d="M222 52h40M222 62h56M222 72h28"/>
+            <rect class="blk on" x="310" y="32" width="80" height="56" rx="6"/>
+            <path class="dat" d="M322 52h40M322 62h56M322 72h28"/>
+            <rect class="blk dash" x="410" y="32" width="80" height="56" rx="6"/>
+            <rect class="blk on" x="410" y="32" width="80" height="56" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;1;1" keyTimes="0;0.7;0.74;1" dur="5s" repeatCount="indefinite"/></rect>
+            <path class="dat" d="M422 52h40" opacity="0"><animate attributeName="opacity" values="0;0;0.6;0.6" keyTimes="0;0.15;0.19;1" dur="5s" repeatCount="indefinite"/></path>
+            <path class="dat" d="M422 62h56" opacity="0"><animate attributeName="opacity" values="0;0;0.6;0.6" keyTimes="0;0.35;0.39;1" dur="5s" repeatCount="indefinite"/></path>
+            <path class="dat" d="M422 72h28" opacity="0"><animate attributeName="opacity" values="0;0;0.6;0.6" keyTimes="0;0.55;0.59;1" dur="5s" repeatCount="indefinite"/></path>
+            <rect class="flashb" x="410" y="32" width="80" height="56" rx="6" opacity="0"><animate attributeName="opacity" values="0;0;0.35;0;0" keyTimes="0;0.7;0.73;0.86;1" dur="5s" repeatCount="indefinite"/></rect>
+            <rect class="blk dash" x="510" y="32" width="80" height="56" rx="6"/>
+          </g>
+        </svg>
+        <figcaption class="viz-cap">Illustration: a new block is filled, sealed, and linked to the chain every 5 seconds.</figcaption>
+      </figure>
       <div class="alur"><h3>Setting up the network</h3>
         <ol><li>Each group installs Geth</li><li>Validator addresses are collected</li><li>The genesis block is composed</li><li>Computers connect to each other</li></ol>
       </div>
@@ -558,7 +823,9 @@ html.loading, html.loading body { overflow: hidden; }
   </div>
 </div></section>
 
-<footer class="kaki"><div class="wrap">All code is at <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>. 2026.</div></footer>
+<footer class="kaki"><div class="wrap">All code is at <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>. 2026.
+  <p class="hint">Psst. Type <kbd>hack</kbd> on your keyboard, or <button type="button" id="hackBtn">tap here</button>.</p>
+</div></footer>
 
 <script>
 (function () {
@@ -570,9 +837,49 @@ html.loading, html.loading body { overflow: hidden; }
   var readyQ = [];
   function whenReady(fn) { if (root.classList.contains("loading")) readyQ.push(fn); else fn(); }
 
-  /* Name: split into letters, then fit to screen width */
+  function watch(els, cb, th, once) {
+    var o = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) { cb(e.target, true); if (once) o.unobserve(e.target); }
+        else if (!once) cb(e.target, false);
+      });
+    }, { threshold: th });
+    els.forEach(function (el) { whenReady(function () { o.observe(el); }); });
+  }
+
+  /* Scramble / decode effect */
+  var GL = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&@!?/<>[]{}=+*";
+  function rnd() { return GL.charAt(Math.floor(Math.random() * GL.length)); }
+  function scramble(els, finals, o, done) {
+    o = o || {};
+    var base = o.base == null ? 400 : o.base;
+    var step = o.step == null ? 110 : o.step;
+    var t0 = null, last = 0, dead = false;
+    function frame(ts) {
+      if (dead) return;
+      if (t0 === null) t0 = ts;
+      var t = ts - t0, left = 0, tick = ts - last > 45;
+      if (tick) last = ts;
+      els.forEach(function (el, i) {
+        if (t >= base + i * step) {
+          if (el.textContent !== finals[i]) el.textContent = finals[i];
+          if (o.cls) el.classList.remove(o.cls);
+        } else {
+          left++;
+          if (o.cls) el.classList.add(o.cls);
+          if (tick || el.textContent === finals[i]) el.textContent = rnd();
+        }
+      });
+      if (left) requestAnimationFrame(frame); else if (done) done();
+    }
+    requestAnimationFrame(frame);
+    return { stop: function () { dead = true; } };
+  }
+
+  /* Name: split into letters, fit to width, decode on load and on hover */
   var nama = document.getElementById("nama");
   var span = nama && nama.firstElementChild;
+  var letters = [];
   if (js && nama && span) {
     var txt = span.textContent;
     span.textContent = "";
@@ -581,21 +888,39 @@ html.loading, html.loading body { overflow: hidden; }
       var s = document.createElement("span");
       s.className = "ch";
       s.setAttribute("aria-hidden", "true");
+      s.setAttribute("data-c", c);
       s.style.setProperty("--i", i);
       s.textContent = c;
       span.appendChild(s);
+      letters.push(s);
     });
   }
   function fit() {
     if (!span) return;
     var box = nama.parentElement.clientWidth;
+    var cur = letters.map(function (l) { return l.textContent; });
+    letters.forEach(function (l) { l.textContent = l.getAttribute("data-c"); l.style.width = ""; });
     nama.style.fontSize = "100px";
+    var ws = letters.map(function (l) { return l.getBoundingClientRect().width; });
+    letters.forEach(function (l, i) { l.style.width = (ws[i] / 100) + "em"; l.textContent = cur[i]; });
     var w = span.getBoundingClientRect().width;
     if (w > 0 && box > 0) nama.style.fontSize = (100 * box / w) + "px";
   }
   fit();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   window.addEventListener("resize", fit);
+
+  var nameRun = false;
+  function runName(fast) {
+    if (nameRun || !letters.length) return;
+    nameRun = true;
+    var finals = letters.map(function (l) { return l.getAttribute("data-c"); });
+    scramble(letters, finals, { base: fast ? 120 : 500, step: fast ? 60 : 130, cls: "scr" }, function () { nameRun = false; });
+  }
+  if (js && letters.length) {
+    whenReady(function () { runName(false); });
+    span.addEventListener("mouseenter", function () { runName(true); });
+  }
 
   /* Statement: word-by-word entrance */
   var st = document.querySelector(".pernyataan");
@@ -648,12 +973,89 @@ html.loading, html.loading body { overflow: hidden; }
     $$(".panel").forEach(function (p) {
       reveal($$("h2", p));
       reveal($$(".fakta > div", p), 0.09, 0.1);
-      reveal($$(".cerita > p", p), 0.1, 0.1);
+      reveal($$(".cerita > p, .cerita > .stat, .cerita > .viz", p), 0.1, 0.1);
     });
     reveal($$(".tentang h2"));
     reveal($$(".tentang-isi p"), 0.1);
     reveal($$(".alat > div"), 0.1);
     reveal($$(".kaki .wrap"));
+  }
+
+  /* Illustrations: run only while visible */
+  var vizEls = $$(".viz");
+  function svgOf(v) { return v.querySelector("svg"); }
+  if (js) {
+    vizEls.forEach(function (v) {
+      v.classList.add("off");
+      var s = svgOf(v);
+      if (s && s.pauseAnimations) s.pauseAnimations();
+    });
+    watch(vizEls, function (v, vis) {
+      v.classList.toggle("off", !vis);
+      var s = svgOf(v);
+      if (s && s.pauseAnimations) { if (vis) s.unpauseAnimations(); else s.pauseAnimations(); }
+    }, 0.2, false);
+  } else {
+    vizEls.forEach(function (v) {
+      var s = svgOf(v);
+      if (s && s.pauseAnimations) s.pauseAnimations();
+    });
+  }
+
+  /* Count-up numbers */
+  function fmt(n, dec) {
+    return n.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  }
+  if (js) {
+    var stats = $$(".stat b");
+    stats.forEach(function (b) {
+      var dec = +b.getAttribute("data-dec") || 0;
+      var suf = b.getAttribute("data-suffix") || "";
+      b.textContent = fmt(0, dec) + suf;
+    });
+    watch(stats, function (b) {
+      var end = +b.getAttribute("data-count");
+      var dec = +b.getAttribute("data-dec") || 0;
+      var suf = b.getAttribute("data-suffix") || "";
+      var t0 = null, dur = 1800;
+      var f = function (ts) {
+        if (t0 === null) t0 = ts;
+        var p = Math.min(1, (ts - t0) / dur);
+        var e = 1 - Math.pow(1 - p, 3);
+        b.textContent = fmt(end * e, dec) + suf;
+        if (p < 1) requestAnimationFrame(f);
+      };
+      requestAnimationFrame(f);
+    }, 0.6, true);
+  }
+
+  /* CTF flag decrypt loop */
+  var flagEl = document.getElementById("flagOut");
+  if (js && flagEl) {
+    var FLAG = flagEl.getAttribute("data-flag");
+    flagEl.textContent = "";
+    var fl = FLAG.split("").map(function (c) {
+      var s = document.createElement("span");
+      s.textContent = c;
+      flagEl.appendChild(s);
+      return s;
+    });
+    var flagVisible = false, flagRunning = false, flagTimer = null;
+    var runFlag = function () {
+      if (!flagVisible || flagRunning) return;
+      flagRunning = true;
+      flagEl.classList.remove("done");
+      scramble(fl, FLAG.split(""), { base: 300, step: 90 }, function () {
+        flagEl.classList.add("done");
+        flagRunning = false;
+        flagTimer = setTimeout(runFlag, 3200);
+      });
+    };
+    watch($$(".viz-term"), function (el, vis) {
+      flagVisible = vis;
+      clearTimeout(flagTimer);
+      if (vis) runFlag();
+    }, 0.4, false);
   }
 
   /* Scroll progress bar */
@@ -671,23 +1073,112 @@ html.loading, html.loading body { overflow: hidden; }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
 
-  /* Cursor spotlight (mouse devices only) */
-  var spot = document.querySelector(".spot");
-  if (!reduce && spot && window.matchMedia("(hover: hover)").matches) {
-    var tx = window.innerWidth / 2, ty = window.innerHeight / 3, cx = tx, cy = ty, running = false;
-    var loop = function () {
-      cx += (tx - cx) * 0.12;
-      cy += (ty - cy) * 0.12;
+  /* Custom cursor + spotlight (mouse devices only) */
+  var fine = !reduce && window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (fine) {
+    var spot = document.querySelector(".spot");
+    var dot = document.querySelector(".cur-dot");
+    var ring = document.querySelector(".cur-ring");
+    var tx = window.innerWidth / 2, ty = window.innerHeight / 3;
+    var cx = tx, cy = ty, rx = tx, ry = ty, running = false;
+    var step = function () {
+      cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
+      rx += (tx - rx) * 0.22; ry += (ty - ry) * 0.22;
       spot.style.setProperty("--mx", cx + "px");
       spot.style.setProperty("--my", cy + "px");
-      if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) requestAnimationFrame(loop);
-      else running = false;
+      ring.style.transform = "translate3d(" + rx + "px," + ry + "px,0)";
+      if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5 || Math.abs(tx - rx) > 0.5 || Math.abs(ty - ry) > 0.5) {
+        requestAnimationFrame(step);
+      } else { running = false; }
     };
     window.addEventListener("mousemove", function (e) {
       tx = e.clientX; ty = e.clientY;
-      if (!running) { running = true; requestAnimationFrame(loop); }
+      dot.style.transform = "translate3d(" + tx + "px," + ty + "px,0)";
+      root.classList.add("cursor-on");
+      root.classList.remove("cursor-out");
+      if (!running) { running = true; requestAnimationFrame(step); }
     }, { passive: true });
+    root.addEventListener("mouseleave", function () { root.classList.add("cursor-out"); });
+    root.addEventListener("mouseenter", function () { root.classList.remove("cursor-out"); });
+    document.addEventListener("mouseover", function (e) {
+      var t = e.target;
+      ring.classList.toggle("hot", !!(t && t.closest && t.closest("a, button, .ch")));
+    });
+    document.addEventListener("mousedown", function () { ring.classList.add("down"); });
+    document.addEventListener("mouseup", function () { ring.classList.remove("down"); });
   }
+
+  /* Hacker mode */
+  var rain = document.getElementById("rain");
+  var rctx = rain.getContext && rain.getContext("2d");
+  var rainOn = false, rainLast = 0, rW = 0, rH = 0, drops = [];
+  var RCH = "01\u30A2\u30A4\u30A6\u30A8\u30AA\u30AB\u30AD\u30AF\u30B1\u30B3\u30B5\u30B7\u30B9\u30BB\u30BD{}[]<>/=+*#$%";
+  function rainInit() {
+    var d = Math.min(2, window.devicePixelRatio || 1);
+    rW = window.innerWidth; rH = window.innerHeight;
+    rain.width = rW * d; rain.height = rH * d;
+    rctx.setTransform(d, 0, 0, d, 0, 0);
+    drops = [];
+    for (var i = 0; i < Math.ceil(rW / 16); i++) drops.push(Math.random() * -50);
+    rctx.fillStyle = "#000";
+    rctx.fillRect(0, 0, rW, rH);
+  }
+  function rainFrame(ts) {
+    if (!rainOn) return;
+    if (ts - rainLast > 50) {
+      rainLast = ts;
+      rctx.fillStyle = "rgba(0,0,0,.12)";
+      rctx.fillRect(0, 0, rW, rH);
+      rctx.fillStyle = "#39ff88";
+      rctx.font = "14px monospace";
+      for (var i = 0; i < drops.length; i++) {
+        var ch = RCH.charAt(Math.floor(Math.random() * RCH.length));
+        rctx.fillText(ch, i * 16, drops[i] * 16);
+        if (drops[i] * 16 > rH && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    requestAnimationFrame(rainFrame);
+  }
+  function rainStart() {
+    if (!rctx || rainOn) return;
+    rainOn = true; rainInit(); requestAnimationFrame(rainFrame);
+  }
+  function rainStop() { rainOn = false; }
+  window.addEventListener("resize", function () { if (rainOn) rainInit(); });
+
+  var hackOn = false;
+  var toast = document.getElementById("toast"), toastT;
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toast.classList.remove("show"); }, 3200);
+  }
+  function setHacker(on) {
+    if (on === hackOn) return;
+    hackOn = on;
+    root.classList.toggle("hacker", on);
+    fit();
+    if (js) runName(true);
+    if (on) {
+      if (!reduce) rainStart();
+      showToast("ACCESS GRANTED. Hacker mode on. Type exit or press Esc to leave.");
+    } else {
+      rainStop();
+      showToast("Back to normal.");
+    }
+  }
+  var buf = "";
+  document.addEventListener("keydown", function (e) {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === "Escape") { if (hackOn) setHacker(false); return; }
+    if (!e.key || e.key.length !== 1) return;
+    buf = (buf + e.key.toLowerCase()).slice(-4);
+    if (buf === "hack") { setHacker(true); buf = ""; }
+    else if (buf === "exit") { setHacker(false); buf = ""; }
+  });
+  document.getElementById("hackBtn").addEventListener("click", function () { setHacker(!hackOn); });
 
   /* Intro */
   var intro = document.getElementById("intro");
