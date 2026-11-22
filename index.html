@@ -10,9 +10,15 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:wght@400;600&display=swap">
 <script>
-if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) && "IntersectionObserver" in window) {
-  document.documentElement.classList.add("js");
-}
+(function () {
+  var r = document.documentElement;
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  if (!("IntersectionObserver" in window)) return;
+  r.classList.add("js");
+  var seen = false;
+  try { seen = sessionStorage.getItem("introSeen") === "1"; } catch (e) {}
+  if (!seen) r.classList.add("loading");
+})();
 </script>
 <style>
 /*
@@ -88,6 +94,54 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 }
 
 /* Intro */
+html.loading, html.loading body { overflow: hidden; }
+.js.loading .nama .ch, .js.loading .pernyataan .w { animation-play-state: paused; }
+.intro {
+  display: none; position: fixed; inset: 0; z-index: 100; color: var(--paper);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.js.loading .intro, .intro.open { display: block; }
+.intro.open { pointer-events: none; }
+.intro-half {
+  position: absolute; left: 0; right: 0; height: 50.5%; background: var(--ink);
+  transition: transform 1s cubic-bezier(.77, 0, .18, 1);
+}
+.intro-half.top { top: 0; }
+.intro-half.bot { bottom: 0; }
+.intro.open .intro-half.top { transform: translateY(-101%); }
+.intro.open .intro-half.bot { transform: translateY(101%); }
+.intro-core {
+  position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto;
+  padding: max(2rem, env(safe-area-inset-top, 0px)) var(--gutter-r) max(1.5rem, env(safe-area-inset-bottom, 0px)) var(--gutter);
+  transition: opacity .4s ease, transform .8s cubic-bezier(.2, .8, .2, 1);
+}
+.intro.open .intro-core { opacity: 0; transform: scale(1.04); }
+.intro-log { margin: 0; font-size: clamp(.85rem, 1.6vw, 1.05rem); line-height: 1.9; color: var(--dim); align-self: start; }
+.intro-log div { animation: lineIn .45s ease both; }
+.intro-log div:last-child { color: var(--paper); }
+.intro-log div:last-child::after { content: "_"; color: var(--glow); animation: blink 1s steps(1) infinite; }
+.intro.granted .intro-log div:last-child { color: var(--glow); text-shadow: 0 0 14px rgba(159,196,255,.6); }
+@keyframes lineIn { from { opacity: 0; transform: translateX(-12px); } }
+@keyframes blink { 50% { opacity: 0; } }
+.intro-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding-bottom: 1.25rem; }
+.intro-count {
+  font-family: var(--display); font-weight: 900; font-stretch: 62%;
+  font-size: clamp(5rem, 26vw, 22rem); line-height: .8; font-variant-numeric: tabular-nums;
+  transition: color .4s, text-shadow .4s;
+}
+.intro.granted .intro-count { color: var(--glow); text-shadow: 0 0 40px rgba(159,196,255,.45); }
+.intro-skip {
+  font: inherit; font-size: .85rem; color: var(--dim); background: none; border: 1px solid var(--line);
+  border-radius: 999px; padding: .5rem 1rem; cursor: pointer; transition: color .3s, border-color .3s;
+}
+.intro-skip:hover, .intro-skip:focus-visible { color: var(--paper); border-color: var(--glow-line); }
+.intro-meter { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
+.intro-meter i {
+  display: block; height: 100%; transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--glow-line), var(--glow)); box-shadow: 0 0 14px rgba(159,196,255,.7);
+}
+
+/* Hero */
 .pembuka { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); }
 .namabox { width: 100%; overflow: visible; }
 .nama {
@@ -243,6 +297,19 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 </style>
 </head>
 <body>
+
+<div class="intro" id="intro">
+  <div class="intro-half top"></div>
+  <div class="intro-half bot"></div>
+  <div class="intro-core">
+    <pre class="intro-log" id="introLog"></pre>
+    <div class="intro-foot">
+      <div class="intro-count" id="introCount">000</div>
+      <button class="intro-skip" id="introSkip" type="button">Skip</button>
+    </div>
+    <div class="intro-meter"><i id="introBar"></i></div>
+  </div>
+</div>
 
 <div class="progress" aria-hidden="true"></div>
 <div class="aurora" aria-hidden="true"></div>
@@ -500,6 +567,9 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
+  var readyQ = [];
+  function whenReady(fn) { if (root.classList.contains("loading")) readyQ.push(fn); else fn(); }
+
   /* Name: split into letters, then fit to screen width */
   var nama = document.getElementById("nama");
   var span = nama && nama.firstElementChild;
@@ -569,7 +639,7 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
       els.forEach(function (el, i) {
         el.classList.add("rv");
         el.style.setProperty("--d", ((base || 0) + i * (step || 0.08)).toFixed(2) + "s");
-        rio.observe(el);
+        whenReady(function () { rio.observe(el); });
       });
     };
     reveal($$(".sisi p"), 0.12);
@@ -617,6 +687,63 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
       tx = e.clientX; ty = e.clientY;
       if (!running) { running = true; requestAnimationFrame(loop); }
     }, { passive: true });
+  }
+
+  /* Intro */
+  var intro = document.getElementById("intro");
+  if (intro && root.classList.contains("loading")) {
+    var logEl = document.getElementById("introLog");
+    var barEl = document.getElementById("introBar");
+    var cntEl = document.getElementById("introCount");
+    var lines = [
+      [0, "> boot jbeees.sys"],
+      [0.22, "> mounting 10 projects ........ ok"],
+      [0.5, "> encrypting data ............ ok"],
+      [0.8, "> access granted"]
+    ];
+    var shown = 0, start = null, DURATION = 2800, finished = false, raf;
+
+    var finish = function (skipped) {
+      if (finished) return;
+      finished = true;
+      cancelAnimationFrame(raf);
+      barEl.style.transform = "scaleX(1)";
+      cntEl.textContent = "100";
+      intro.classList.add("granted");
+      try { sessionStorage.setItem("introSeen", "1"); } catch (e) {}
+      setTimeout(function () {
+        intro.classList.add("open");
+        root.classList.remove("loading");
+        readyQ.splice(0).forEach(function (fn) { fn(); });
+        setTimeout(function () { if (intro.parentNode) intro.parentNode.removeChild(intro); }, 1200);
+      }, skipped ? 0 : 450);
+    };
+
+    var tick = function (ts) {
+      if (finished) return;
+      if (start === null) start = ts;
+      var t = Math.min(1, (ts - start) / DURATION);
+      var e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+      while (shown < lines.length && t >= lines[shown][0]) {
+        var d = document.createElement("div");
+        d.textContent = lines[shown][1];
+        logEl.appendChild(d);
+        shown++;
+      }
+      barEl.style.transform = "scaleX(" + e + ")";
+      cntEl.textContent = ("00" + Math.round(e * 100)).slice(-3);
+      if (t < 1) raf = requestAnimationFrame(tick); else finish(false);
+    };
+
+    var skip = document.getElementById("introSkip");
+    skip.addEventListener("click", function () { finish(true); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" || e.key === "Enter") finish(true);
+    });
+    setTimeout(function () { finish(true); }, 6000); // failsafe
+    raf = requestAnimationFrame(tick);
+  } else if (intro) {
+    intro.parentNode.removeChild(intro);
   }
 })();
 </script>
