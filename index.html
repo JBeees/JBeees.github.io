@@ -1,20 +1,25 @@
 <!doctype html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>JBeees | Portofolio</title>
-<meta name="description" content="Portofolio sepuluh proyek JBeees: sistem backend, keamanan siber, data, dan aplikasi, dijelaskan dengan bahasa sehari-hari.">
+<title>JBeees | Portfolio</title>
+<meta name="description" content="JBeees's portfolio of ten projects: backend systems, cybersecurity, data, and apps, explained in plain language.">
 <meta name="theme-color" content="#000000">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Source+Serif+4:wght@400;600&display=swap">
+<script>
+if (!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) && "IntersectionObserver" in window) {
+  document.documentElement.classList.add("js");
+}
+</script>
 <style>
 /*
-  Konsep: sebuah ruangan gelap. Setiap karya adalah satu panel hitam dengan judul raksasa yang melebar,
-  dan jalur kerjanya menyala satu per satu seperti lampu panel dinyalakan saat sistem bekerja.
-  Nama di bagian atas memenuhi lebar layar (diukur lewat skrip), huruf dipadatkan dengan sumbu lebar Archivo.
-  Satu tema gelap yang disengaja, tanpa mode terang.
+  Concept: a dark room. Each project is one black panel with a huge, wide title,
+  and its workflow lights up step by step, like panel lights switching on as the system runs.
+  The name at the top fills the screen width (measured by script), set in Archivo's wide axis.
+  One deliberate dark theme, no light mode.
 */
 :root {
   color-scheme: dark;
@@ -52,7 +57,37 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   padding-right: var(--gutter-r);
 }
 
-/* Pembuka */
+/* Ambient layers */
+.progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 50;
+  transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--glow-line), var(--glow));
+  box-shadow: 0 0 12px rgba(159,196,255,.6);
+  pointer-events: none;
+}
+.aurora { position: fixed; inset: 0; z-index: -2; overflow: hidden; pointer-events: none; }
+.aurora::before, .aurora::after {
+  content: ""; position: absolute; width: 60vmax; height: 60vmax;
+  border-radius: 50%; filter: blur(90px); opacity: .28;
+}
+.aurora::before {
+  top: -25vmax; left: -15vmax;
+  background: radial-gradient(circle, #2f5fb3, transparent 65%);
+  animation: drift1 22s ease-in-out infinite alternate;
+}
+.aurora::after {
+  bottom: -30vmax; right: -20vmax;
+  background: radial-gradient(circle, #5a3fa8, transparent 65%);
+  animation: drift2 26s ease-in-out infinite alternate;
+}
+@keyframes drift1 { to { transform: translate(18vmax, 12vmax) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-16vmax, -10vmax) scale(1.1); } }
+.spot {
+  position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(520px circle at var(--mx, 50%) var(--my, 30%), rgba(159,196,255,.09), transparent 60%);
+}
+
+/* Intro */
 .pembuka { padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3rem, 6vw, 5rem); }
 .namabox { width: 100%; overflow: visible; }
 .nama {
@@ -67,6 +102,11 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   color: var(--paper);
 }
 .nama span { display: inline-block; }
+.nama .ch { transition: transform .35s cubic-bezier(.2,.8,.2,1), color .35s, text-shadow .35s; }
+.nama .ch:hover { color: var(--glow); transform: translateY(-.05em); text-shadow: 0 0 .25em rgba(159,196,255,.55); }
+.js .nama .ch { animation: rise 1s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * .08s + .1s); }
+@keyframes rise { from { opacity: 0; transform: translateY(.35em) rotate(4deg); filter: blur(12px); } }
+
 .pembuka-isi {
   display: grid;
   grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
@@ -82,12 +122,14 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   font-weight: 400;
   text-wrap: balance;
 }
+.js .pernyataan .w { display: inline-block; animation: wordin .8s cubic-bezier(.2,.8,.2,1) backwards; animation-delay: calc(var(--i, 0) * .04s + .7s); }
+@keyframes wordin { from { opacity: 0; transform: translateY(.6em); filter: blur(6px); } }
 .sisi { margin: 0; color: var(--dim); font-family: var(--display); font-size: .98rem; line-height: 1.6; display: grid; gap: .9rem; align-content: start; }
 .sisi p { margin: 0; }
 .sisi a { color: var(--paper); text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
 .sisi a:hover { text-decoration-color: var(--glow); }
 
-/* Daftar karya */
+/* Project list */
 .daftar { padding-bottom: clamp(3rem, 7vw, 6rem); }
 .daftar h2, .tentang h2 {
   margin: 0 0 1.25rem;
@@ -99,14 +141,26 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   color: var(--dim);
 }
 .daftar ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: clamp(2rem, 6vw, 5rem); border-top: 1px solid var(--line); }
-.daftar li { border-bottom: 1px solid var(--line); }
-.daftar a { display: grid; gap: .1rem; padding: .95rem 0; text-decoration: none; line-height: 1.4; }
-.daftar b { font-family: var(--display); font-weight: 700; font-stretch: 110%; font-size: 1.1rem; }
+.daftar li { position: relative; border-bottom: 1px solid var(--line); }
+.daftar li::after {
+  content: ""; position: absolute; left: 0; bottom: -1px; height: 1px; width: 100%;
+  background: var(--glow); transform: scaleX(0); transform-origin: 0 50%;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.daftar li:hover::after, .daftar li:focus-within::after { transform: scaleX(1); }
+.daftar a { position: relative; display: grid; gap: .1rem; padding: .95rem 1.6rem .95rem 0; text-decoration: none; line-height: 1.4; transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+.daftar a::after {
+  content: "\2197"; position: absolute; right: 0; top: 50%; transform: translate(-8px, -50%);
+  color: var(--glow); opacity: 0; transition: opacity .3s, transform .35s cubic-bezier(.2,.8,.2,1);
+}
+.daftar a:hover, .daftar a:focus-visible { transform: translateX(10px); }
+.daftar a:hover::after, .daftar a:focus-visible::after { opacity: 1; transform: translate(0, -50%); }
+.daftar b { font-family: var(--display); font-weight: 700; font-stretch: 110%; font-size: 1.1rem; transition: color .3s; }
 .daftar span { color: var(--dim); font-size: .98rem; }
 .daftar a:hover b { color: var(--glow); }
 
-/* Panel karya */
-.panel { border-top: 1px solid var(--line); padding-block: clamp(3.5rem, 9vw, 8rem); background: var(--ink); }
+/* Project panels */
+.panel { border-top: 1px solid var(--line); padding-block: clamp(3.5rem, 9vw, 8rem); background: transparent; }
 .panel h2 {
   margin: 0 0 clamp(1.75rem, 4vw, 3.25rem);
   font-family: var(--display);
@@ -124,14 +178,14 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 .fakta div { min-width: 0; }
 .fakta dt { color: var(--dim); margin-bottom: .15rem; }
 .fakta dd { margin: 0; color: var(--paper); overflow-wrap: anywhere; }
-.fakta a { text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; }
-.fakta a:hover { text-decoration-color: var(--glow); }
+.fakta a { text-decoration: underline; text-decoration-color: var(--glow-line); text-underline-offset: 4px; transition: text-decoration-color .3s, color .3s; }
+.fakta a:hover { text-decoration-color: var(--glow); color: var(--glow); }
 .cerita { min-width: 0; max-width: 46rem; }
 .lede { margin: 0 0 1.75rem; font-size: clamp(1.4rem, 2.4vw, 1.85rem); line-height: 1.35; color: var(--paper); text-wrap: pretty; }
 .cerita p { margin: 0 0 1.15rem; color: #c9cdd2; }
 .cerita p b { color: var(--paper); font-weight: 600; }
 
-/* Jalur kerja: titik-titik yang menyala berurutan */
+/* Workflow: dots that light up in sequence */
 .alur { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); }
 .alur h3 { margin: 0 0 1.4rem; font-family: var(--display); font-size: .95rem; font-weight: 600; font-stretch: 100%; color: var(--dim); }
 .alur ol { list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); column-gap: 1.25rem; }
@@ -149,7 +203,13 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 @keyframes titik { to { background: var(--glow); border-color: var(--glow); box-shadow: 0 0 0 4px rgba(159,196,255,.14), 0 0 18px rgba(159,196,255,.45); } }
 @keyframes garis { to { background: var(--glow-line); } }
 
-/* Tentang */
+/* Scroll reveal */
+.js .rv { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .8s cubic-bezier(.2,.8,.2,1); transition-delay: var(--d, 0s); }
+.js .rv.in { opacity: 1; transform: none; }
+.js .panel h2.rv { opacity: 1; transform: none; clip-path: inset(0 100% 0 0); transition: clip-path 1.1s cubic-bezier(.2,.8,.2,1); transition-delay: 0s; }
+.js .panel h2.rv.in { clip-path: inset(-.2em -.2em -.2em -.2em); }
+
+/* About */
 .tentang { border-top: 1px solid var(--line); padding-block: clamp(3.5rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem); }
 .tentang-isi { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 2.5rem clamp(2rem, 6vw, 5rem); }
 .tentang p { margin: 0 0 1.15rem; max-width: 40rem; }
@@ -175,6 +235,7 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .aurora::before, .aurora::after { animation: none; }
   .alur li { color: var(--paper); }
   .alur li::before { background: var(--glow); border-color: var(--glow); }
   .alur li::after { background: var(--glow-line); }
@@ -183,226 +244,230 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 </head>
 <body>
 
+<div class="progress" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true"></div>
+<div class="spot" aria-hidden="true"></div>
+
 <header class="pembuka wrap">
   <div class="namabox"><h1 class="nama" id="nama"><span>JBeees</span></h1></div>
   <div class="pembuka-isi">
-    <p class="pernyataan">Saya membuat sistem yang tetap menyala saat banyak orang memakainya, dan menjaga datanya tetap aman.</p>
+    <p class="pernyataan">I build systems that stay up when many people use them, and keep their data safe.</p>
     <div class="sisi">
-      <p>Mahasiswa Ilmu Komputer. Di halaman ini ada sepuluh karya saya, dijelaskan dengan bahasa sehari-hari.</p>
-      <p>Terbuka untuk peluang di bidang keamanan siber dan bidang terkait. Hubungi lewat <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>.</p>
+      <p>Computer science student. This page features ten of my projects, explained in everyday language.</p>
+      <p>Open to opportunities in cybersecurity and related fields. Reach me via <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>.</p>
     </div>
   </div>
 </header>
 
-<nav class="daftar wrap" aria-label="Daftar karya">
-  <h2>Karya saya</h2>
+<nav class="daftar wrap" aria-label="Project list">
+  <h2>My projects</h2>
   <ul>
-    <li><a href="#ramai"><b>Tetap berjalan saat ramai</b><span>Sistem transaksi yang tidak ambruk saat jutaan transaksi datang</span></a></li>
-    <li><a href="#belajar-bersama"><b>Belajar bersama tanpa berbagi data</b><span>Empat komputer melatih satu model tanpa saling menukar data</span></a></li>
-    <li><a href="#data-berantakan"><b>Mengubah data berantakan jadi wawasan</b><span>Data penjualan dibersihkan lalu menjadi grafik</span></a></li>
-    <li><a href="#peta-sekolah"><b>Peta penyaluran makanan di sekolah</b><span>Situs pemantau porsi makanan yang sampai ke sekolah</span></a></li>
-    <li><a href="#vault"><b>Vault, catatan keuangan di ponsel</b><span>Aplikasi Android untuk uang harian, tabungan, dan utang</span></a></li>
-    <li><a href="#pengunduh"><b>Pengunduh file yang bisa dilanjutkan</b><span>Unduhan dipecah agar cepat dan tidak mulai dari nol</span></a></li>
-    <li><a href="#chatbot"><b>Chatbot yang paham maksud</b><span>Menjawab dari daftar FAQ walau kalimatnya berbeda</span></a></li>
-    <li><a href="#ctf"><b>Berlatih membongkar teka-teki keamanan</b><span>Catatan dari lomba keamanan siber</span></a></li>
-    <li><a href="#playlist-mp3"><b>Dari playlist menjadi MP3</b><span>Skrip otomatis untuk playlist Spotify</span></a></li>
-    <li><a href="#blockchain"><b>Pondasi jaringan blockchain</b><span>Jaringan privat untuk proyek kelompok</span></a></li>
+    <li><a href="#ramai"><b>Staying up when it gets busy</b><span>A transaction system that doesn't collapse when millions of transactions arrive</span></a></li>
+    <li><a href="#belajar-bersama"><b>Learning together without sharing data</b><span>Four computers train one model without swapping data</span></a></li>
+    <li><a href="#data-berantakan"><b>Turning messy data into insight</b><span>Sales data gets cleaned, then becomes charts</span></a></li>
+    <li><a href="#peta-sekolah"><b>A map of school meal distribution</b><span>A site that tracks meal portions reaching schools</span></a></li>
+    <li><a href="#vault"><b>Vault, a finance tracker on your phone</b><span>An Android app for daily money, savings, and debts</span></a></li>
+    <li><a href="#pengunduh"><b>A file downloader that can resume</b><span>Downloads are split to be fast and never restart from zero</span></a></li>
+    <li><a href="#chatbot"><b>A chatbot that gets what you mean</b><span>Answers from an FAQ list even when the wording differs</span></a></li>
+    <li><a href="#ctf"><b>Practicing cracking security puzzles</b><span>Notes from cybersecurity competitions</span></a></li>
+    <li><a href="#playlist-mp3"><b>From playlist to MP3</b><span>An automation script for Spotify playlists</span></a></li>
+    <li><a href="#blockchain"><b>The foundation of a blockchain network</b><span>A private network for a group project</span></a></li>
   </ul>
 </nav>
 
 <main>
 
 <section class="panel" id="ramai"><div class="wrap">
-  <h2>Tetap berjalan saat ramai</h2>
+  <h2>Staying up when it gets busy</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Sistem backend</dd></div>
-      <div><dt>Dikerjakan</dt><dd>Proyek tim Cukurukuk, Universitas Brawijaya</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Go, PostgreSQL, Redis, RabbitMQ, Nginx, Docker, Prometheus, Grafana</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/exploding-user-data-scalabilities" rel="noopener">JBeees/exploding-user-data-scalabilities</a></dd></div>
+      <div><dt>Type</dt><dd>Backend system</dd></div>
+      <div><dt>Built for</dt><dd>Cukurukuk team project, Universitas Brawijaya</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Go, PostgreSQL, Redis, RabbitMQ, Nginx, Docker, Prometheus, Grafana</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/exploding-user-data-scalabilities" rel="noopener">JBeees/exploding-user-data-scalabilities</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Simulasi sistem transaksi yang tidak ambruk ketika jutaan transaksi datang bersamaan.</p>
-      <p><b>Masalahnya.</b> Bayangkan aplikasi bank saat gajian atau promo besar. Jutaan orang membuka aplikasi dalam satu jam dan sistem lama bisa macet. Proyek ini meniru kejadian seperti itu dengan target 1 juta transaksi per jam, berdasarkan studi kasus CIMB Niaga.</p>
-      <p><b>Yang saya buat.</b> Pekerjaan dibagi ke tiga salinan server yang kembar. Pengguna yang terlalu agresif ditahan, pekerjaan berat dititipkan ke antrean, dan jawaban yang sering diminta disimpan di memori cepat. Jika satu bagian bermasalah, bagian itu diputus sementara supaya masalahnya tidak menjalar. Semuanya dipantau lewat dashboard grafik dan diuji dengan uji beban.</p>
-      <div class="alur"><h3>Perjalanan satu transaksi</h3>
-        <ol><li>Pengguna ramai datang</li><li>Pembagi beban memilih server</li><li>Tiga server kembar bekerja</li><li>Antrean dan memori cepat</li><li>Disimpan di database</li></ol>
+      <p class="lede">A simulation of a transaction system that doesn't collapse when millions of transactions arrive at once.</p>
+      <p><b>The problem.</b> Picture a banking app on payday or during a big promo. Millions of people open the app within an hour, and an older system can jam. This project imitates that situation with a target of 1 million transactions per hour, based on a CIMB Niaga case study.</p>
+      <p><b>What I built.</b> The work is split across three identical copies of the server. Users who get too aggressive are throttled, heavy jobs are handed off to a queue, and frequently requested answers are kept in fast memory. If one part misbehaves, it is cut off temporarily so the problem doesn't spread. Everything is monitored through a graph dashboard and tested with load tests.</p>
+      <div class="alur"><h3>The journey of one transaction</h3>
+        <ol><li>A crowd of users arrives</li><li>Load balancer picks a server</li><li>Three identical servers work</li><li>Queue and fast memory</li><li>Saved in the database</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="belajar-bersama"><div class="wrap">
-  <h2>Belajar bersama tanpa berbagi data</h2>
+  <h2>Learning together without sharing data</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Pembelajaran mesin terdistribusi</dd></div>
-      <div><dt>Dikerjakan</dt><dd>Tugas kuliah Sistem Komputasi Terdistribusi</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, scikit-learn, koneksi TCP socket</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/federated_learning_project" rel="noopener">JBeees/federated_learning_project</a></dd></div>
+      <div><dt>Type</dt><dd>Distributed machine learning</dd></div>
+      <div><dt>Built for</dt><dd>Distributed Computing Systems coursework</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, scikit-learn, TCP socket connections</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/federated_learning_project" rel="noopener">JBeees/federated_learning_project</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Empat komputer melatih satu model prediksi bersama, tanpa ada yang mengirim data aslinya.</p>
-      <p><b>Masalahnya.</b> Data nilai siswa bersifat pribadi, jadi tidak boleh dikumpulkan di satu tempat. Padahal agar tebakannya akurat, sebuah model perlu belajar dari banyak data.</p>
-      <p><b>Yang saya buat.</b> Setiap komputer belajar dari data miliknya sendiri, lalu hanya mengirim hasil belajarnya ke server pusat. Server merata-ratakan hasil itu dan mengirim kembali versi yang lebih pintar. Setelah 10 putaran, tebakan lulus atau tidak lulus mencapai ketepatan rata-rata sekitar 90,6%, memakai data nilai siswa dari UCI Machine Learning Repository.</p>
-      <div class="alur"><h3>Satu putaran belajar</h3>
-        <ol><li>Data tetap di tiap komputer</li><li>Tiap komputer belajar sendiri</li><li>Server merata-ratakan hasilnya</li><li>Model baru dikirim kembali</li></ol>
+      <p class="lede">Four computers train one shared prediction model, and none of them sends its raw data.</p>
+      <p><b>The problem.</b> Student grade data is private, so it can't be gathered in one place. Yet to guess accurately, a model needs to learn from a lot of data.</p>
+      <p><b>What I built.</b> Each computer learns from its own data, then sends only what it learned to a central server. The server averages those results and sends back a smarter version. After 10 rounds, the pass-or-fail prediction reaches an average accuracy of about 90.6%, using student grade data from the UCI Machine Learning Repository.</p>
+      <div class="alur"><h3>One round of learning</h3>
+        <ol><li>Data stays on each computer</li><li>Each computer learns on its own</li><li>The server averages the results</li><li>The new model is sent back</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="data-berantakan"><div class="wrap">
-  <h2>Mengubah data berantakan jadi wawasan</h2>
+  <h2>Turning messy data into insight</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Pengolahan data</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, PostgreSQL, SQL, Docker</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/online-retail-data-pipeline" rel="noopener">JBeees/online-retail-data-pipeline</a></dd></div>
+      <div><dt>Type</dt><dd>Data processing</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, PostgreSQL, SQL, Docker</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/online-retail-data-pipeline" rel="noopener">JBeees/online-retail-data-pipeline</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Jalur otomatis yang membersihkan data penjualan toko online lalu mengubahnya menjadi grafik.</p>
-      <p><b>Masalahnya.</b> Data penjualan mentah penuh masalah, seperti pesanan yang dibatalkan, kolom kosong, harga nol, dan baris ganda. Data seperti ini sulit dipakai untuk mengambil keputusan.</p>
-      <p><b>Yang saya buat.</b> Satu perintah menjalankan semuanya. Data dibaca, dibersihkan, dirapikan menjadi tiga tabel, disimpan di database, lalu diolah menjadi grafik dan jawaban atas pertanyaan bisnis. Data yang dipakai berasal dari kumpulan transaksi toko online di Kaggle.</p>
-      <div class="alur"><h3>Dari file mentah ke grafik</h3>
-        <ol><li>File data mentah</li><li>Dibersihkan</li><li>Dirapikan jadi tiga tabel</li><li>Disimpan di database</li><li>Menjadi grafik</li></ol>
+      <p class="lede">An automated pipeline that cleans an online store's sales data and turns it into charts.</p>
+      <p><b>The problem.</b> Raw sales data is full of problems, such as cancelled orders, empty fields, zero prices, and duplicate rows. Data like this is hard to use for making decisions.</p>
+      <p><b>What I built.</b> One command runs everything. The data is read, cleaned, tidied into three tables, stored in a database, then turned into charts and answers to business questions. The data comes from an online store transaction dataset on Kaggle.</p>
+      <div class="alur"><h3>From raw file to chart</h3>
+        <ol><li>Raw data file</li><li>Cleaned</li><li>Tidied into three tables</li><li>Saved in a database</li><li>Turned into charts</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="peta-sekolah"><div class="wrap">
-  <h2>Peta penyaluran makanan di sekolah</h2>
+  <h2>A map of school meal distribution</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Aplikasi web</dd></div>
-      <div><dt>Dikerjakan</dt><dd>Tugas kuliah</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>PHP, Laravel, Leaflet (peta), Vite</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/WEB" rel="noopener">JBeees/WEB</a></dd></div>
+      <div><dt>Type</dt><dd>Web application</dd></div>
+      <div><dt>Built for</dt><dd>Coursework</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>PHP, Laravel, Leaflet (maps), Vite</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/WEB" rel="noopener">JBeees/WEB</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Situs untuk memantau makanan yang dikirim ke sekolah, lengkap dengan peta dan laporan.</p>
-      <p><b>Masalahnya.</b> Saat makanan dibagikan ke banyak sekolah di banyak daerah, sulit mengetahui berapa porsi yang sudah sampai dan apakah kualitasnya baik.</p>
-      <p><b>Yang saya buat.</b> Sebuah situs dengan peta yang menampilkan jumlah sekolah penerima, jumlah siswa, porsi terkirim, dan persentase makanan yang berkualitas baik. Petugas masuk dengan akun, mengunggah foto dokumentasi beserta jumlah porsi yang bagus dan yang buruk, lalu melihat riwayat dan laporannya.</p>
-      <div class="alur"><h3>Dari sekolah ke layar</h3>
-        <ol><li>Petugas masuk dengan akun</li><li>Mengunggah foto dan jumlah porsi</li><li>Dihitung otomatis</li><li>Tampil di peta dan laporan</li></ol>
+      <p class="lede">A site for tracking meals delivered to schools, complete with a map and reports.</p>
+      <p><b>The problem.</b> When food is distributed to many schools across many regions, it's hard to know how many portions have arrived and whether the quality is good.</p>
+      <p><b>What I built.</b> A site with a map showing the number of recipient schools, the number of students, portions delivered, and the percentage of good-quality meals. Officers log in with an account, upload documentation photos along with the number of good and bad portions, then view the history and reports.</p>
+      <div class="alur"><h3>From school to screen</h3>
+        <ol><li>Officer logs in</li><li>Uploads a photo and portion counts</li><li>Calculated automatically</li><li>Shown on the map and reports</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="vault"><div class="wrap">
-  <h2>Vault, catatan keuangan di ponsel</h2>
+  <h2>Vault, a finance tracker on your phone</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Aplikasi Android</dd></div>
-      <div><dt>Cocok untuk</dt><dd>Android 7.0 ke atas</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Java, SQLite, MPAndroidChart</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/personal-finance-android-app" rel="noopener">JBeees/personal-finance-android-app</a></dd></div>
+      <div><dt>Type</dt><dd>Android app</dd></div>
+      <div><dt>Works on</dt><dd>Android 7.0 and above</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Java, SQLite, MPAndroidChart</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/personal-finance-android-app" rel="noopener">JBeees/personal-finance-android-app</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Aplikasi sederhana untuk mencatat uang harian, tabungan, dan utang.</p>
-      <p><b>Masalahnya.</b> Uang saku atau gaji sering habis tanpa terasa karena pengeluaran kecil tidak tercatat.</p>
-      <p><b>Yang saya buat.</b> Aplikasi yang memisahkan uang harian dari tabungan. Pengeluaran dicatat per kategori seperti makanan, transportasi, dan hiburan, lalu saldo berkurang otomatis. Tabungan dikunci dengan PIN 6 angka. Ringkasan mingguan, bulanan, dan tahunan tampil sebagai grafik batang, dan ada halaman untuk mencatat utang. Semua data tersimpan di ponsel dan tidak dikirim ke internet.</p>
-      <div class="alur"><h3>Alur memakai aplikasi</h3>
-        <ol><li>Menambah saldo</li><li>Mencatat pengeluaran</li><li>Saldo diperbarui otomatis</li><li>Melihat grafik ringkasan</li></ol>
+      <p class="lede">A simple app for tracking daily money, savings, and debts.</p>
+      <p><b>The problem.</b> Allowances or salaries often vanish unnoticed because small expenses go unrecorded.</p>
+      <p><b>What I built.</b> An app that keeps daily money separate from savings. Expenses are logged by category such as food, transport, and entertainment, and the balance drops automatically. Savings are locked with a 6-digit PIN. Weekly, monthly, and yearly summaries appear as bar charts, and there's a page for recording debts. All data stays on the phone and is never sent to the internet.</p>
+      <div class="alur"><h3>How the app is used</h3>
+        <ol><li>Add balance</li><li>Record an expense</li><li>Balance updates automatically</li><li>View the summary charts</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="pengunduh"><div class="wrap">
-  <h2>Pengunduh file yang bisa dilanjutkan</h2>
+  <h2>A file downloader that can resume</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Aplikasi desktop</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, PyQt6, ekstensi browser (JavaScript)</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/python-download-manager" rel="noopener">JBeees/python-download-manager</a></dd></div>
+      <div><dt>Type</dt><dd>Desktop application</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, PyQt6, browser extension (JavaScript)</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/python-download-manager" rel="noopener">JBeees/python-download-manager</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Aplikasi untuk mengunduh file besar dengan lebih cepat dan bisa dilanjutkan jika terputus.</p>
-      <p><b>Masalahnya.</b> Mengunduh file besar sering gagal di tengah jalan, lalu harus mulai lagi dari awal.</p>
-      <p><b>Yang saya buat.</b> Terinspirasi dari Internet Download Manager. File dipecah menjadi beberapa bagian (bawaannya delapan) yang diunduh bersamaan sehingga lebih cepat. Jika koneksi putus, unduhan dilanjutkan dari bagian terakhir. Ada tombol jeda, lanjut, batal, dan ulang, juga antrean unduhan. Ekstensi untuk Chrome atau Brave bisa menangkap unduhan dari browser secara otomatis.</p>
-      <div class="alur"><h3>Dari klik sampai selesai</h3>
-        <ol><li>Link diklik di browser</li><li>Ekstensi menangkapnya</li><li>File dipecah jadi beberapa bagian</li><li>Bagian diunduh bersamaan</li><li>Digabung jadi satu file</li></ol>
+      <p class="lede">An app for downloading large files faster, and resuming if the connection drops.</p>
+      <p><b>The problem.</b> Large downloads often fail halfway, forcing you to start over from the beginning.</p>
+      <p><b>What I built.</b> Inspired by Internet Download Manager. A file is split into several parts (eight by default) that download at the same time, so it's faster. If the connection drops, the download resumes from the last part. There are pause, resume, cancel, and retry buttons, plus a download queue. An extension for Chrome or Brave can automatically catch downloads from the browser.</p>
+      <div class="alur"><h3>From click to done</h3>
+        <ol><li>Link clicked in the browser</li><li>Extension catches it</li><li>File split into several parts</li><li>Parts download simultaneously</li><li>Merged into one file</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="chatbot"><div class="wrap">
-  <h2>Chatbot yang paham maksud</h2>
+  <h2>A chatbot that gets what you mean</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Chatbot di terminal</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, Sentence Transformers (Hugging Face)</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/simple-cli-faq-chatbot" rel="noopener">JBeees/simple-cli-faq-chatbot</a></dd></div>
+      <div><dt>Type</dt><dd>Terminal chatbot</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, Sentence Transformers (Hugging Face)</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/simple-cli-faq-chatbot" rel="noopener">JBeees/simple-cli-faq-chatbot</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Chatbot tanya jawab yang memahami arti pertanyaan, bukan sekadar mencocokkan kata.</p>
-      <p><b>Masalahnya.</b> Orang menanyakan hal yang sama dengan kalimat yang berbeda. Chatbot yang hanya mencocokkan kata persis akan gagal mengenalinya.</p>
-      <p><b>Yang saya buat.</b> Chatbot ini mengubah pertanyaan menjadi deretan angka yang mewakili artinya, lalu mencari pertanyaan di daftar FAQ yang artinya paling dekat. Jika tidak cukup mirip, ia mengaku tidak tahu dan tidak mengarang jawaban.</p>
-      <div class="alur"><h3>Cara chatbot menjawab</h3>
-        <ol><li>Pertanyaan diketik</li><li>Diubah menjadi angka yang mewakili arti</li><li>Dicocokkan dengan daftar FAQ</li><li>Menjawab, atau mengaku tidak tahu</li></ol>
+      <p class="lede">A Q&amp;A chatbot that understands the meaning of a question, not just matching words.</p>
+      <p><b>The problem.</b> People ask the same thing in different sentences. A chatbot that only matches exact words will fail to recognize them.</p>
+      <p><b>What I built.</b> This chatbot turns a question into a series of numbers that represent its meaning, then finds the question in the FAQ list whose meaning is closest. If nothing is similar enough, it admits it doesn't know instead of making up an answer.</p>
+      <div class="alur"><h3>How the chatbot answers</h3>
+        <ol><li>Question typed</li><li>Turned into numbers that represent meaning</li><li>Matched against the FAQ list</li><li>Answers, or admits it doesn't know</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="ctf"><div class="wrap">
-  <h2>Berlatih membongkar teka-teki keamanan</h2>
+  <h2>Practicing cracking security puzzles</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Keamanan siber</dd></div>
-      <div><dt>Isi</dt><dd>Lebih dari 250 folder soal</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, C, Bash, PHP</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/CTF" rel="noopener">JBeees/CTF</a></dd></div>
+      <div><dt>Type</dt><dd>Cybersecurity</dd></div>
+      <div><dt>Contents</dt><dd>More than 250 challenge folders</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, C, Bash, PHP</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/CTF" rel="noopener">JBeees/CTF</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Kumpulan catatan dan skrip dari lomba keamanan siber yang saya ikuti untuk berlatih.</p>
-      <p><b>Apa itu CTF.</b> Panitia menyembunyikan sebuah kode rahasia yang disebut bendera di dalam sistem yang sengaja dibuat berlubang. Peserta berlomba menemukannya. Latihan ini melatih cara berpikir penyerang supaya bisa bertahan dengan lebih baik.</p>
-      <p><b>Yang saya simpan.</b> Soal dari picoCTF dan CTFlearn, paling banyak soal forensik digital, yaitu mencari jejak di dalam file dan rekaman jaringan. Ada juga rekayasa balik (membongkar cara kerja sebuah program), eksploitasi biner, keamanan web, dan kriptografi. Isinya berupa catatan langkah penyelesaian dan skrip bantu.</p>
-      <div class="alur"><h3>Satu soal, dari awal sampai bendera</h3>
-        <ol><li>Soal diberikan</li><li>Menyelidiki file atau sistemnya</li><li>Menemukan celah</li><li>Bendera didapat</li></ol>
+      <p class="lede">A collection of notes and scripts from cybersecurity competitions I joined to practice.</p>
+      <p><b>What is CTF.</b> Organizers hide a secret code called a flag inside a deliberately vulnerable system, and participants race to find it. The practice trains the attacker's way of thinking so I can defend better.</p>
+      <p><b>What I keep here.</b> Challenges from picoCTF and CTFlearn, mostly digital forensics, meaning hunting for traces inside files and network recordings. There's also reverse engineering (working out how a program works), binary exploitation, web security, and cryptography. The contents are notes on solution steps and helper scripts.</p>
+      <div class="alur"><h3>One challenge, from start to flag</h3>
+        <ol><li>Challenge given</li><li>Investigating the file or system</li><li>Finding the weakness</li><li>Flag captured</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="playlist-mp3"><div class="wrap">
-  <h2>Dari playlist menjadi MP3</h2>
+  <h2>From playlist to MP3</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Skrip otomatis</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Python, Spotipy, yt-dlp, FFmpeg</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/spotify-playlist-downloader" rel="noopener">JBeees/spotify-playlist-downloader</a></dd></div>
+      <div><dt>Type</dt><dd>Automation script</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Python, Spotipy, yt-dlp, FFmpeg</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/spotify-playlist-downloader" rel="noopener">JBeees/spotify-playlist-downloader</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Skrip yang mengubah isi playlist Spotify menjadi berkas MP3 di komputer.</p>
-      <p><b>Yang saya buat.</b> Skrip membaca daftar lagu dari playlist, termasuk yang privat atau kolaboratif, mencari tiap lagu di YouTube, mengunduh audio terbaik yang tersedia, lalu mengubahnya menjadi MP3 berkualitas 320 kbps.</p>
-      <p><b>Catatan penting.</b> Proyek ini untuk belajar dan keperluan pribadi. Mengunduh konten berhak cipta dapat melanggar aturan YouTube dan hukum setempat.</p>
-      <div class="alur"><h3>Dari playlist ke file</h3>
-        <ol><li>Daftar lagu dibaca</li><li>Tiap lagu dicari</li><li>Audio diunduh</li><li>Diubah menjadi MP3</li></ol>
+      <p class="lede">A script that turns a Spotify playlist into MP3 files on your computer.</p>
+      <p><b>What I built.</b> The script reads the song list from a playlist, including private or collaborative ones, searches for each song on YouTube, downloads the best available audio, then converts it into 320 kbps MP3.</p>
+      <p><b>Important note.</b> This project is for learning and personal use. Downloading copyrighted content may violate YouTube's rules and local law.</p>
+      <div class="alur"><h3>From playlist to files</h3>
+        <ol><li>Song list is read</li><li>Each song is searched</li><li>Audio is downloaded</li><li>Converted to MP3</li></ol>
       </div>
     </div>
   </div>
 </div></section>
 
 <section class="panel" id="blockchain"><div class="wrap">
-  <h2>Pondasi jaringan blockchain</h2>
+  <h2>The foundation of a blockchain network</h2>
   <div class="isi">
     <dl class="fakta">
-      <div><dt>Jenis</dt><dd>Jaringan blockchain privat</dd></div>
-      <div><dt>Dikerjakan</dt><dd>Tugas kuliah, dibagi ke empat kelompok</dd></div>
-      <div class="lebar"><dt>Dibuat dengan</dt><dd>Ethereum (Geth), konsensus Clique</dd></div>
-      <div class="lebar"><dt>Kode</dt><dd><a href="https://github.com/JBeees/blockchain-skripsi" rel="noopener">JBeees/blockchain-skripsi</a></dd></div>
+      <div><dt>Type</dt><dd>Private blockchain network</dd></div>
+      <div><dt>Built for</dt><dd>Coursework, split across four groups</dd></div>
+      <div class="lebar"><dt>Built with</dt><dd>Ethereum (Geth), Clique consensus</dd></div>
+      <div class="lebar"><dt>Code</dt><dd><a href="https://github.com/JBeees/blockchain-skripsi" rel="noopener">JBeees/blockchain-skripsi</a></dd></div>
     </dl>
     <div class="cerita">
-      <p class="lede">Jaringan blockchain privat yang disiapkan sebagai dasar proyek bersama beberapa kelompok.</p>
-      <p><b>Apa itu blockchain.</b> Buku catatan bersama yang tidak bisa diubah diam-diam, karena setiap komputer di jaringan memegang salinannya.</p>
-      <p><b>Yang ada di sini.</b> Empat kelompok membangun satu sistem bersama, yang mencakup kontrak pintar, mesin pendeteksi plagiarisme, dan dashboard pemantauan. Repositori ini baru memuat dasarnya, yaitu konfigurasi awal jaringan dengan lima validator, blok baru setiap 5 detik, dan panduan pemasangan untuk tiap kelompok. Bagian lainnya dikerjakan kelompok lain dan belum ada di sini.</p>
-      <div class="alur"><h3>Menyiapkan jaringan</h3>
-        <ol><li>Tiap kelompok memasang Geth</li><li>Alamat validator dikumpulkan</li><li>Blok pembuka disusun</li><li>Komputer saling tersambung</li></ol>
+      <p class="lede">A private blockchain network set up as the foundation for a project shared by several groups.</p>
+      <p><b>What is a blockchain.</b> A shared ledger that can't be quietly altered, because every computer on the network holds a copy.</p>
+      <p><b>What's here.</b> Four groups build one shared system, covering smart contracts, a plagiarism detection engine, and a monitoring dashboard. This repository only holds the foundation: the initial network configuration with five validators, a new block every 5 seconds, and setup guides for each group. The other parts were built by other groups and aren't here.</p>
+      <div class="alur"><h3>Setting up the network</h3>
+        <ol><li>Each group installs Geth</li><li>Validator addresses are collected</li><li>The genesis block is composed</li><li>Computers connect to each other</li></ol>
       </div>
     </div>
   </div>
@@ -411,29 +476,46 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
 </main>
 
 <section class="tentang"><div class="wrap">
-  <h2>Tentang saya</h2>
+  <h2>About me</h2>
   <div class="tentang-isi">
     <div>
-      <p>Saya mahasiswa Ilmu Komputer dengan dua rasa ingin tahu. Pertama, bagaimana membuat sistem yang kuat saat penggunanya melonjak. Kedua, bagaimana sebuah sistem bisa dibobol, supaya saya tahu cara melindunginya.</p>
-      <p>Sehari-hari saya memakai Linux, Python, dan C/C++. Saat ini saya sedang mendalami uji penetrasi dan forensik digital.</p>
+      <p>I'm a computer science student with two curiosities. First, how to build systems that stay strong when users surge. Second, how a system can be broken into, so I know how to protect it.</p>
+      <p>Day to day I use Linux, Python, and C/C++. Right now I'm studying penetration testing and digital forensics.</p>
     </div>
     <dl class="alat">
-      <div><dt>Bahasa pemrograman</dt><dd>Python, Go, Java, PHP, C/C++, JavaScript</dd></div>
-      <div><dt>Penyimpanan data</dt><dd>PostgreSQL, SQLite, Redis, RabbitMQ</dd></div>
-      <div><dt>Infrastruktur dan pemantauan</dt><dd>Docker, Nginx, Prometheus, Grafana</dd></div>
-      <div><dt>Kerangka kerja</dt><dd>Laravel, PyQt6</dd></div>
+      <div><dt>Programming languages</dt><dd>Python, Go, Java, PHP, C/C++, JavaScript</dd></div>
+      <div><dt>Data storage</dt><dd>PostgreSQL, SQLite, Redis, RabbitMQ</dd></div>
+      <div><dt>Infrastructure and monitoring</dt><dd>Docker, Nginx, Prometheus, Grafana</dd></div>
+      <div><dt>Frameworks</dt><dd>Laravel, PyQt6</dd></div>
     </dl>
   </div>
 </div></section>
 
-<footer class="kaki"><div class="wrap">Semua kode ada di <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>. 2026.</div></footer>
+<footer class="kaki"><div class="wrap">All code is at <a href="https://github.com/JBeees" rel="noopener">github.com/JBeees</a>. 2026.</div></footer>
 
 <script>
 (function () {
+  var root = document.documentElement;
+  var js = root.classList.contains("js");
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function $$(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 
+  /* Name: split into letters, then fit to screen width */
   var nama = document.getElementById("nama");
   var span = nama && nama.firstElementChild;
+  if (js && nama && span) {
+    var txt = span.textContent;
+    span.textContent = "";
+    nama.setAttribute("aria-label", txt);
+    txt.split("").forEach(function (c, i) {
+      var s = document.createElement("span");
+      s.className = "ch";
+      s.setAttribute("aria-hidden", "true");
+      s.style.setProperty("--i", i);
+      s.textContent = c;
+      span.appendChild(s);
+    });
+  }
   function fit() {
     if (!span) return;
     var box = nama.parentElement.clientWidth;
@@ -445,11 +527,25 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   window.addEventListener("resize", fit);
 
-  var alur = document.querySelectorAll(".alur");
-  Array.prototype.forEach.call(alur, function (a) {
-    Array.prototype.forEach.call(a.querySelectorAll("li"), function (li, i) {
-      li.style.setProperty("--i", i);
+  /* Statement: word-by-word entrance */
+  var st = document.querySelector(".pernyataan");
+  if (js && st) {
+    var words = st.textContent.trim().split(/\s+/);
+    st.textContent = "";
+    words.forEach(function (w, i) {
+      var s = document.createElement("span");
+      s.className = "w";
+      s.style.setProperty("--i", i);
+      s.textContent = w;
+      st.appendChild(s);
+      st.appendChild(document.createTextNode(" "));
     });
+  }
+
+  /* Workflow lights */
+  var alur = $$(".alur");
+  alur.forEach(function (a) {
+    $$("li", a).forEach(function (li, i) { li.style.setProperty("--i", i); });
   });
   if ("IntersectionObserver" in window && !reduce) {
     var io = new IntersectionObserver(function (entries) {
@@ -457,9 +553,70 @@ a:focus-visible { outline: 2px solid var(--glow); outline-offset: 4px; }
         if (e.isIntersecting) { e.target.classList.add("go"); io.unobserve(e.target); }
       });
     }, { threshold: 0.5 });
-    Array.prototype.forEach.call(alur, function (a) { io.observe(a); });
+    alur.forEach(function (a) { io.observe(a); });
   } else {
-    Array.prototype.forEach.call(alur, function (a) { a.classList.add("go"); });
+    alur.forEach(function (a) { a.classList.add("go"); });
+  }
+
+  /* Scroll reveal */
+  if (js) {
+    var rio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); rio.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: "0px 0px -8% 0px" });
+    var reveal = function (els, step, base) {
+      els.forEach(function (el, i) {
+        el.classList.add("rv");
+        el.style.setProperty("--d", ((base || 0) + i * (step || 0.08)).toFixed(2) + "s");
+        rio.observe(el);
+      });
+    };
+    reveal($$(".sisi p"), 0.12);
+    reveal($$(".daftar h2"));
+    reveal($$(".daftar li"), 0.05);
+    $$(".panel").forEach(function (p) {
+      reveal($$("h2", p));
+      reveal($$(".fakta > div", p), 0.09, 0.1);
+      reveal($$(".cerita > p", p), 0.1, 0.1);
+    });
+    reveal($$(".tentang h2"));
+    reveal($$(".tentang-isi p"), 0.1);
+    reveal($$(".alat > div"), 0.1);
+    reveal($$(".kaki .wrap"));
+  }
+
+  /* Scroll progress bar */
+  var bar = document.querySelector(".progress");
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var h = root.scrollHeight - window.innerHeight;
+      bar.style.transform = "scaleX(" + (h > 0 ? Math.min(1, window.scrollY / h) : 0) + ")";
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+
+  /* Cursor spotlight (mouse devices only) */
+  var spot = document.querySelector(".spot");
+  if (!reduce && spot && window.matchMedia("(hover: hover)").matches) {
+    var tx = window.innerWidth / 2, ty = window.innerHeight / 3, cx = tx, cy = ty, running = false;
+    var loop = function () {
+      cx += (tx - cx) * 0.12;
+      cy += (ty - cy) * 0.12;
+      spot.style.setProperty("--mx", cx + "px");
+      spot.style.setProperty("--my", cy + "px");
+      if (Math.abs(tx - cx) > 0.5 || Math.abs(ty - cy) > 0.5) requestAnimationFrame(loop);
+      else running = false;
+    };
+    window.addEventListener("mousemove", function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!running) { running = true; requestAnimationFrame(loop); }
+    }, { passive: true });
   }
 })();
 </script>
